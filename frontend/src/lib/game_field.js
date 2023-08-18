@@ -1,8 +1,9 @@
 import src from '@/assets/image/game/game_full_sprites.png'
-import {Sprite} from "@/lib/sprite";
-import {Unit} from "@/lib/element";
-import Common from "@/lib/common";
-import {ControlGroup, SelectionArea} from "@/lib/auxiliary";
+import {Sprite} from "@/lib/sprite"
+import {Unit} from "@/lib/element"
+import Common from "@/lib/common"
+import {SelectGroup, SelectionArea} from "@/lib/auxiliary"
+import {ControlGroups} from "@/lib/control_group";
 
 export class GameField2D {
   constructor(canvas) {
@@ -17,7 +18,9 @@ export class GameField2D {
     this.tiles = []
     this.dummies = []
 
-    this.control_group = new ControlGroup()
+    this.select_group = new SelectGroup()
+    this.control_groups = new ControlGroups()
+    this.ctrl_press = false
   }
 
   add_event_listener() {
@@ -27,15 +30,6 @@ export class GameField2D {
       let y = event.clientY - rect.top
 
       this.move_logic(x, y)
-    })
-
-    this.field.addEventListener('click', (event) => {
-      let rect = this.field.getBoundingClientRect()
-      let x = event.clientX - rect.left
-      let y = event.clientY - rect.top
-
-      this.click_logic(x, y)
-      console.log('click')
     })
 
     this.field.addEventListener('mousedown', (event) => {
@@ -65,36 +59,57 @@ export class GameField2D {
         let x = event.clientX - rect.left
         let y = event.clientY - rect.top
 
+        this.click_logic(x, y, event.shiftKey)
+
         if (!this.selection_area.is_clear) {
           this.selection_area.reset_pos()
         }
-        console.log('mouseup')
       }
+    })
+
+    this.field.addEventListener('mouseleave', (event) => {
+      this.selection_area.reset_pos()
+    })
+
+    document.addEventListener('keyup', (event) => {
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.ctrlKey || event.altKey) {
+        event.preventDefault()
+      }
+
+      this.control_groups_logic(event)
     })
   }
 
-  click_logic(x, y) {
-    let empty = true
-    for (let u of this.units) {
-      if (u.click_detection(x, y)) {
-        if (!u.is_picked) {
-          this.control_group.add(u)
-        } else {
-          this.control_group.remove(u)
-        }
-        empty = false
-        break
-      }
-    }
-
-    if (empty && this.selection_area.is_clear) {
-      this.control_group.reset()
+  move_logic(x, y) {
+    for (let u of this.select_group.units) {
+      u.set_new_pos(x, y)
     }
   }
 
-  move_logic(x, y) {
-    for (let u of this.control_group.units) {
-      u.set_new_pos(x, y)
+  click_logic(x, y, shift_key) {
+    for (let u of this.units) {
+      if (u.click_detection(x, y)) {
+        if (!u.is_picked) {
+          this.select_group.add(u)
+        }
+        break
+      }
+    }
+  }
+
+  control_groups_logic(event) {
+    if (event.keyCode >= 49 && event.keyCode <= 57) {
+      if (event.ctrlKey) {
+        this.control_groups.add(event.keyCode, this.select_group.units)
+      } else {
+        let control_group = this.control_groups.get_group(event.keyCode)
+        if (control_group) {
+          this.select_group.units = control_group.units
+        }
+      }
     }
   }
 
@@ -174,7 +189,9 @@ export class GameField2D {
     let height = this.selection_area.height
 
     if (u.in_area_rect(a_x, a_y, width, height)) {
-      this.control_group.add(u)
+      this.select_group.add(u)
+    } else if (!this.selection_area.is_clear) {
+      this.select_group.remove(u)
     }
   }
 
