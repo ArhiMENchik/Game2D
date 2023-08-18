@@ -1,0 +1,65 @@
+@import './color.scss';
+
+#app {
+  background-color: $main-background-color;
+  color: #ffffff;
+  height: 100vh;
+}
+
+.clear-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+// region Main
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+
+  .menu {
+    border: 5px solid $menu-border-color;
+    border-radius: 10px;
+
+    background-color: $menu-background-color;
+
+    padding: 5px;
+
+    .item {
+      font-size: 25px;
+
+      border-bottom: 1px solid gray;
+
+      transition: all 0.3s;
+
+      cursor: pointer;
+
+      &:hover {
+        background-color: lighten($menu-background-color, 5%);
+      }
+
+      &:last-child {
+        border: none;
+      }
+    }
+  }
+}
+
+// endregion
+
+// region Game
+.game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+
+  .game-field {
+    border: 1px solid $menu-border-color;
+  }
+}
+
+// endregion
