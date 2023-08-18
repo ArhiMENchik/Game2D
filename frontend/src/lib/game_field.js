@@ -2,8 +2,9 @@ import src from '@/assets/image/game/game_full_sprites.png'
 import {Sprite} from "@/lib/sprite"
 import {Unit} from "@/lib/element"
 import Common from "@/lib/common"
-import {SelectGroup, SelectionArea} from "@/lib/auxiliary"
+import {SelectGroup} from "@/lib/select_group"
 import {ControlGroups} from "@/lib/control_group";
+import {SelectionArea} from "@/lib/selection_area";
 
 export class GameField2D {
   constructor(canvas) {
@@ -20,7 +21,6 @@ export class GameField2D {
 
     this.select_group = new SelectGroup()
     this.control_groups = new ControlGroups()
-    this.ctrl_press = false
   }
 
   add_event_listener() {
@@ -44,7 +44,7 @@ export class GameField2D {
     })
 
     this.field.addEventListener('mousemove', (event) => {
-      if (event.button === 0 && !this.selection_area.is_clear) {
+      if (event.button === 0 && this.selection_area.is_start) {
         let rect = this.field.getBoundingClientRect()
         let x = event.clientX - rect.left
         let y = event.clientY - rect.top
@@ -61,9 +61,7 @@ export class GameField2D {
 
         this.click_logic(x, y, event.shiftKey)
 
-        if (!this.selection_area.is_clear) {
-          this.selection_area.reset_pos()
-        }
+        this.selection_area.reset_pos()
       }
     })
 
@@ -92,8 +90,14 @@ export class GameField2D {
   click_logic(x, y, shift_key) {
     for (let u of this.units) {
       if (u.click_detection(x, y)) {
-        if (!u.is_picked) {
-          this.select_group.add(u)
+        if (shift_key) {
+          if (u.is_picked) {
+            this.select_group.remove(u)
+          } else {
+            this.select_group.add(u)
+          }
+        } else {
+          this.select_group.units = [u]
         }
         break
       }
