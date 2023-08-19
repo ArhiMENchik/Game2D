@@ -1,6 +1,10 @@
 <template>
   <div class="game">
-    <canvas id="game-field" width="960" height="960" class="game-field"/>
+    <div class="game-wrapper">
+      <canvas id="game-field" height="640" width="1280" class="game-field"/>
+      <canvas id="minimap" height="320" width="440" class="minimap"/>
+      <canvas id="game-panel" height="320" width="840" class="game-panel"/>
+    </div>
   </div>
 </template>
 
@@ -15,7 +19,11 @@ export default {
     }
   },
   mounted() {
-    this.game = new Game(document.getElementById('game-field'))
+    let game_field = document.getElementById('game-field')
+    let minimap = document.getElementById('minimap')
+    let game_panel = document.getElementById('minimap')
+
+    this.game = new Game(game_field, minimap, game_panel)
   },
   methods() {
   },

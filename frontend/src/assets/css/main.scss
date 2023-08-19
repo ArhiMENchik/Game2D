@@ -51,14 +51,29 @@
 
 // region Game
 .game {
+  width: 100%;
+  height: 100%;
+
   display: flex;
   justify-content: center;
   align-items: center;
 
-  height: 100vh;
+  .game-wrapper {
+    width: 1290px;
+    height: 964px;
 
-  .game-field {
-    border: 1px solid $menu-border-color;
+    .game-field {
+      border: 1px solid $menu-border-color;
+    }
+
+    .minimap {
+      border: 1px solid $menu-border-color;
+    }
+
+    .game-panel {
+      border: 1px solid $menu-border-color;
+      border-left: none;
+    }
   }
 }
 

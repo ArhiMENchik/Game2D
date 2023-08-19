@@ -4,18 +4,22 @@ import {Sprite} from "@/lib/sprite";
 import src from "@/assets/image/game/game_full_sprites.png";
 import {Unit} from "@/lib/units/element";
 import {FullField} from "@/lib/field/full_field";
-import {Canvas} from "@/lib/field/canvas";
+import {Canvas} from "@/lib/canvas";
 import {SelectionArea} from "@/lib/selection_area";
 import {SelectGroup} from "@/lib/units/select_group";
 import {ControlGroups} from "@/lib/units/control_group";
 import Common from "@/lib/common";
+import {Minimap} from "@/lib/game/minimap";
 
 export class Game {
-  constructor(canvas) {
-    this.canvas = new Canvas(canvas)
+  constructor(game_field, minimap, game_panel) {
+    this.game_field = new Canvas(game_field)
 
-    this.full_field = new FullField(canvas.width, canvas.height, 5)
+    this.full_field = new FullField(game_field.width, game_field.height, 5)
     this.screen = new Screen(...this.full_field.central_rect_pos)
+
+    this.minimap = new Minimap(minimap, this.full_field.width, this.full_field.height)
+    this.game_panel = new Canvas(game_panel)
 
     Element.offset_x = this.screen.x_start
     Element.offset_y = this.screen.y_start
@@ -37,17 +41,17 @@ export class Game {
 
     this.main()
 
-    this.canvas.canvas.addEventListener('contextmenu', (event) => {
-      let rect = this.canvas.canvas.getBoundingClientRect()
+    this.game_field.canvas.addEventListener('contextmenu', (event) => {
+      let rect = this.game_field.canvas.getBoundingClientRect()
       let x = event.clientX - rect.left
       let y = event.clientY - rect.top
 
       this.move_logic(x, y)
     })
 
-    this.canvas.canvas.addEventListener('mousedown', (event) => {
+    this.game_field.canvas.addEventListener('mousedown', (event) => {
       if (event.button === 0) {
-        let rect = this.canvas.canvas.getBoundingClientRect()
+        let rect = this.game_field.canvas.getBoundingClientRect()
         let x = event.clientX - rect.left
         let y = event.clientY - rect.top
 
@@ -56,9 +60,9 @@ export class Game {
       }
     })
 
-    this.canvas.canvas.addEventListener('mousemove', (event) => {
+    this.game_field.canvas.addEventListener('mousemove', (event) => {
       if (event.button === 0 && this.selection_area.is_start) {
-        let rect = this.canvas.canvas.getBoundingClientRect()
+        let rect = this.game_field.canvas.getBoundingClientRect()
         let x = event.clientX - rect.left
         let y = event.clientY - rect.top
 
@@ -66,9 +70,9 @@ export class Game {
       }
     })
 
-    this.canvas.canvas.addEventListener('mouseup', (event) => {
+    this.game_field.canvas.addEventListener('mouseup', (event) => {
       if (event.button === 0) {
-        let rect = this.canvas.canvas.getBoundingClientRect()
+        let rect = this.game_field.canvas.getBoundingClientRect()
         let x = event.clientX - rect.left
         let y = event.clientY - rect.top
 
@@ -78,7 +82,7 @@ export class Game {
       }
     })
 
-    this.canvas.canvas.addEventListener('mouseleave', () => {
+    this.game_field.canvas.addEventListener('mouseleave', () => {
       this.selection_area.reset_pos()
     })
 
@@ -96,7 +100,7 @@ export class Game {
   }
 
   create_start_units() {
-    for (let i = 1; i < 2; i++) {
+    for (let i = 1; i < 15; i++) {
       let x_sprite = 5 * 32
       let y_sprite = 76 * 32
 
@@ -112,11 +116,17 @@ export class Game {
   }
 
   main() {
-    this.canvas.clear()
+    this.game_field.clear()
 
-    this.canvas.draw_rect_with_lines(this.selection_area.data_for_render)
+    this.game_field.draw_rect_with_lines(this.selection_area.data_for_render)
 
-    this.unit_logic([...this.units])
+    this.minimap.screen_logic(...this.screen.data_for_render)
+
+
+    for (let u of this.units) {
+      this.unit_logic(u)
+      this.minimap.unit_draw(u)
+    }
 
     this.render()
 
@@ -163,14 +173,15 @@ export class Game {
 
   screen_move_logic(event) {
     if (event.keyCode >= 37 && event.keyCode <= 40) {
+      let dist = event.shiftKey ? 15 : 5
       if (event.key === 'ArrowUp') {
-        this.screen.decrease_y()
+        this.screen.decrease_y(dist)
       } else if (event.key === 'ArrowLeft') {
-        this.screen.decrease_x()
+        this.screen.decrease_x(dist)
       } else if (event.key === 'ArrowRight') {
-        this.screen.increase_x()
+        this.screen.increase_x(dist)
       } else if (event.key === 'ArrowDown') {
-        this.screen.increase_y()
+        this.screen.increase_y(dist)
       }
 
       Element.offset_x = this.screen.x_start
@@ -178,23 +189,21 @@ export class Game {
     }
   }
 
-  unit_logic(units) {
-    for (let u of units) {
-      this.check_collision(u)
+  unit_logic(u) {
+    this.check_collision(u)
 
-      this.check_in_area(u)
+    this.check_in_area(u)
 
-      if (u.is_picked && this.screen.in_screen(u.x_field_central, u.y_field_central)) {
-        this.canvas.draw_rect_glow(u.x_screen, u.y_screen, u.width, u.height,
-          1, 'rgba(119, 255, 0, 0.4)', 'rgba(255, 255, 0, 0)')
-      }
-
-      if (u.x_field !== u.x_move && u.y_field !== u.y_move) {
-        this.canvas.draw_line(u.x_screen_central, u.y_screen_central, u.x_screen_move_central, u.y_screen_move_central, 'rgb(119, 255, 0)')
-      }
-
-      u._move()
+    if (u.is_picked && this.screen.in_screen(u.x_field_central, u.y_field_central)) {
+      this.game_field.draw_rect_glow(u.x_screen, u.y_screen, u.width, u.height,
+        1, 'rgba(119, 255, 0, 0.4)', 'rgba(255, 255, 0, 0)')
     }
+
+    if (u.x_field !== u.x_move && u.y_field !== u.y_move) {
+      this.game_field.draw_line(u.x_screen_central, u.y_screen_central, u.x_screen_move_central, u.y_screen_move_central, 'rgb(119, 255, 0)')
+    }
+
+    u._move()
   }
 
   check_collision(u) {
@@ -220,7 +229,7 @@ export class Game {
   render() {
     for (let e of [...this.units, ...this.dummies, ...this.tiles]) {
       if (this.screen.in_screen(e.x_field_central, e.y_field_central))
-        this.canvas.render(e)
+        this.game_field.render(e)
     }
   }
 }

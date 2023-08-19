@@ -81,7 +81,7 @@ export class SelectionArea {
       up: [this.x_start, this.y_start < this.y_end ? this.y_start + this.height : this.y_start - this.height],
       right: [this.x_start < this.x_end ? this.x_start + this.width : this.x_start - this.width, this.y_end],
       bottom: [this.x_end, this.y_start],
-      left: [this.x_start, this.y_start],
+      left: [this.x_start, this.y_start]
     }
   }
 }

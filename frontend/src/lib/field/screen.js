@@ -43,4 +43,8 @@ export class Screen {
     return ((this.x_start <= x && this.x_start + this.width >= x) &&
       (this.y_start <= y && this.y_start + this.height >= y))
   }
+
+  get data_for_render() {
+    return [this.x_start, this.y_start, this.width, this.height]
+  }
 }
