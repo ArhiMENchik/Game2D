@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import {Game} from "@/lib/game";
+import {Game} from "@/lib/game/game";
 
 export default {
   name: "Game",

@@ -1,10 +1,10 @@
 export class SelectionArea {
   constructor(color = 'rgb(0, 255, 0)') {
-    this.x_s = 0
-    this.y_s = 0
+    this.x_start = 0
+    this.y_start = 0
 
-    this.x_e = 0
-    this.y_e = 0
+    this.x_end = 0
+    this.y_end = 0
 
     this.is_start = false
 
@@ -16,42 +16,42 @@ export class SelectionArea {
   }
 
   reset_pos() {
-    this.x_s = 0
-    this.y_s = 0
+    this.x_start = 0
+    this.y_start = 0
 
-    this.x_e = 0
-    this.y_e = 0
+    this.x_end = 0
+    this.y_end = 0
 
     this.is_start = false
   }
 
   set_start_pos(x, y) {
-    this.x_s = x
-    this.y_s = y
+    this.x_start = x
+    this.y_start = y
 
     this.is_start = true
   }
 
   set_end_pos(x, y) {
-    this.x_e = x
-    this.y_e = y
+    this.x_end = x
+    this.y_end = y
   }
 
   get highest_x() {
-    return Math.min(this.x_s, this.x_e)
+    return Math.min(this.x_start, this.x_end)
   }
 
   get highest_y() {
-    return Math.min(this.y_s, this.y_e)
+    return Math.min(this.y_start, this.y_end)
   }
 
   get width() {
     let width = 0
 
-    if (this.x_s > this.x_e) {
-      width = this.x_s - this.x_e
-    } else if (this.x_e > this.x_s) {
-      width = this.x_e - this.x_s
+    if (this.x_start > this.x_end) {
+      width = this.x_start - this.x_end
+    } else if (this.x_end > this.x_start) {
+      width = this.x_end - this.x_start
     }
 
     return width
@@ -60,22 +60,28 @@ export class SelectionArea {
   get height() {
     let height = 0
 
-    if (this.y_s > this.y_e) {
-      height = this.y_s - this.y_e
-    } else if (this.y_e > this.y_s) {
-      height = this.y_e - this.y_s
+    if (this.y_start > this.y_end) {
+      height = this.y_start - this.y_end
+    } else if (this.y_end > this.y_start) {
+      height = this.y_end - this.y_start
     }
 
     return height
   }
 
+  in_selection_area(x, y) {
+    return ((this.highest_x <= x && this.highest_x + this.width >= x) &&
+      (this.highest_y <= y && this.highest_y + this.height >= y))
+  }
+
   get data_for_render() {
     return {
-      start: [this.x_s, this.y_s],
-      up: [this.x_s, this.y_s < this.y_e ? this.y_s + this.height : this.y_s - this.height],
-      right: [this.x_s < this.x_e ? this.x_s + this.width : this.x_s - this.width, this.y_e],
-      bottom: [this.x_e, this.y_s],
-      left: [this.x_s, this.y_s],
+      color: this.color,
+      start: [this.x_start, this.y_start],
+      up: [this.x_start, this.y_start < this.y_end ? this.y_start + this.height : this.y_start - this.height],
+      right: [this.x_start < this.x_end ? this.x_start + this.width : this.x_start - this.width, this.y_end],
+      bottom: [this.x_end, this.y_start],
+      left: [this.x_start, this.y_start],
     }
   }
 }
