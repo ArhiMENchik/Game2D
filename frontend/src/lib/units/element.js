@@ -76,10 +76,13 @@ export class Element {
 }
 
 export class Unit extends Element {
-  constructor(sprite, x_sprite, y_sprite, x_field, y_filed, hp = 10, mp = 10, speed = 2) {
+  constructor(sprite, x_sprite, y_sprite, x_field, y_filed, max_hp = 10, max_mp = 10, speed = 2) {
     super(sprite, x_sprite, y_sprite, x_field, y_filed, Element.element_type.unit)
-    this.hp = hp
-    this.mp = mp
+    this.max_hp = max_hp
+    this.max_mp = max_mp
+
+    this.hp = max_hp
+    this.mp = max_mp
 
     this.speed = speed
 
@@ -140,6 +143,13 @@ export class Unit extends Element {
     }
 
     return {x_p, y_p}
+  }
+
+  get hp_color() {
+    let red = 255 - (((this.hp * 100) / this.max_hp) * 255) / 100
+    let green = (((this.hp * 100) / this.max_hp) * 255) / 100
+
+    return `rgb(${red}, ${green}, 0)`
   }
 }
 

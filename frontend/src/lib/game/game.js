@@ -10,23 +10,24 @@ import {SelectGroup} from "@/lib/units/select_group";
 import {ControlGroups} from "@/lib/units/control_group";
 import Common from "@/lib/common";
 import {Minimap} from "@/lib/game/minimap";
+import {Panel} from "@/lib/game/panel";
 
 export class Game {
   constructor(game_field, minimap, game_panel) {
     this.game_field = new Canvas(game_field)
 
+    this.selection_area = new SelectionArea()
+    this.select_group = new SelectGroup()
+    this.control_groups = new ControlGroups()
+
     this.full_field = new FullField(game_field.width, game_field.height, 5)
     this.screen = new Screen(...this.full_field.central_rect_pos)
 
     this.minimap = new Minimap(minimap, this.full_field.width, this.full_field.height)
-    this.game_panel = new Canvas(game_panel)
+    this.game_panel = new Panel(game_panel, this.select_group)
 
     Element.offset_x = this.screen.x_start
     Element.offset_y = this.screen.y_start
-
-    this.selection_area = new SelectionArea()
-    this.select_group = new SelectGroup()
-    this.control_groups = new ControlGroups()
 
     this.units = []
     this.tiles = []
@@ -229,7 +230,9 @@ export class Game {
   render() {
     for (let e of [...this.units, ...this.dummies, ...this.tiles]) {
       if (this.screen.in_screen(e.x_field_central, e.y_field_central))
-        this.game_field.render(e)
+        this.game_field.render(e.data_for_render)
     }
+
+    this.game_panel.draw_panel()
   }
 }

@@ -4,13 +4,22 @@ export class Canvas {
     this.ctx = this.canvas.getContext("2d")
   }
 
+  get width() {
+    return this.canvas.width
+  }
+
+  get height() {
+    return this.canvas.height
+  }
+
+
   clear() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  draw_line(x1, y1, x2, y2, color) {
+  draw_line(x1, y1, x2, y2, color, line_width = 1) {
     this.ctx.strokeStyle = color
-    this.ctx.lineWidth = 1
+    this.ctx.lineWidth = line_width
     this.ctx.beginPath()
     this.ctx.moveTo(x1, y1)
     this.ctx.lineTo(x2, y2)
@@ -38,7 +47,7 @@ export class Canvas {
     this.ctx.fillRect(x - glow_size, y - glow_size, width + glow_size * 2, height + glow_size * 2)
   }
 
-  render(e) {
-    this.ctx.drawImage(...e.data_for_render)
+  render(data) {
+    this.ctx.drawImage(...data)
   }
 }

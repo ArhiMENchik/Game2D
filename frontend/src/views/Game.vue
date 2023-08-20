@@ -21,7 +21,7 @@ export default {
   mounted() {
     let game_field = document.getElementById('game-field')
     let minimap = document.getElementById('minimap')
-    let game_panel = document.getElementById('minimap')
+    let game_panel = document.getElementById('game-panel')
 
     this.game = new Game(game_field, minimap, game_panel)
   },

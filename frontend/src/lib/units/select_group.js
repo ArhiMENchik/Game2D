@@ -1,34 +1,53 @@
 export class SelectGroup {
   constructor() {
     this._units = []
+
+    this.callback = () => {
+    }
+
+    const self = this
+
+    this._proxy_units = new Proxy(self._units, {
+      set(target, p, newValue, receiver) {
+        Reflect.set(target, p, newValue, receiver)
+
+        self.callback()
+
+        return true
+      }
+    })
   }
 
   add(u) {
-    if (this._units.filter(f_u => f_u.id === u.id).length === 0) {
-      this._units.push(u)
+    if (this._proxy_units.filter(f_u => f_u.id === u.id).length === 0) {
+      this._proxy_units.push(u)
       u.is_picked = true
     }
   }
 
   remove(u) {
-    this._units = this._units.filter(f_u => f_u.id !== u.id)
-    u.is_picked = false
+    let indexToDelete = this._proxy_units.findIndex(f_u => f_u.id === u.id)
+
+    if (indexToDelete !== -1) {
+      this._proxy_units.splice(indexToDelete, 1)
+      u.is_picked = false
+    }
   }
 
   reset() {
-    for (let u of this._units) {
+    for (let u of this._proxy_units) {
       u.is_picked = false
     }
 
-    this._units = []
+    this._proxy_units.splice(0, this._proxy_units.length)
   }
 
   get units() {
-    return this._units ? this._units : []
+    return this._proxy_units
   }
 
   set units(value) {
-    if (this._units.length > 0) {
+    if (this._proxy_units.length > 0) {
       this.reset()
     }
 
@@ -37,11 +56,15 @@ export class SelectGroup {
         this.add(u)
       }
     } else {
-      this._units = []
+      this.reset()
     }
   }
 
   get is_empty() {
-    return !(this._units.length > 0)
+    return this._proxy_units.length === 0
+  }
+
+  on_change(func) {
+    this.callback = func
   }
 }
