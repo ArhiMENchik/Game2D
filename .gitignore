@@ -5,5 +5,4 @@ venv/
 media/
 .idea/
 
-/frontend/src/assets/css/*.css
 /frontend/src/assets/css/*.map
