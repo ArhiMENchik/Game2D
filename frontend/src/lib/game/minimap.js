@@ -1,14 +1,66 @@
 import {Canvas} from "@/lib/canvas";
 
 export class Minimap {
-  constructor(canvas, g_f_width, g_f_height) {
+  constructor(canvas, g_f_width, g_f_height, screen, select_group) {
     this.canvas = new Canvas(canvas)
 
     this.scale_x = g_f_width / canvas.width
     this.scale_y = g_f_height / canvas.height
+
+    this.screen = screen
+    this.select_group = select_group
+
+    this.is_move = false
+
+    this.canvas.mousedown(this.move_screen_on.bind(this))
+    this.canvas.mousemove(this.move_screen.bind(this))
+    this.canvas.mouseup(this.move_screen_off.bind(this))
+    this.canvas.mouseleave(this.move_screen_off.bind(this))
+    this.canvas.contextmenu(this.move_unit.bind(this))
   }
 
-  screen_logic(_x_start, _y_start, _width, _height) {
+  move_screen_on(event) {
+    if (event.button !== 0) return
+
+    this.is_move = true
+    this.move_screen(event)
+  }
+
+  move_screen(event) {
+    if (event.button !== 0) return
+    if (!this.is_move) return
+
+    let rect = this.canvas.canvas.getBoundingClientRect()
+    let x = event.clientX - rect.left
+    let y = event.clientY - rect.top
+
+    this.screen.x_start = (x * this.scale_x) - this.screen.width / 2
+    this.screen.y_start = (y * this.scale_y) - this.screen.height / 2
+
+    this.screen.set_element_offset()
+  }
+
+  move_screen_off(event) {
+    if (event.button !== 0) return
+    this.is_move = false
+  }
+
+  move_unit(event) {
+    let rect = this.canvas.canvas.getBoundingClientRect()
+    let x = event.clientX - rect.left
+    let y = event.clientY - rect.top
+
+    x = x * this.scale_x
+    y = y * this.scale_y
+
+    for (let u of this.select_group.units) {
+      u.set_new_pos(x, y)
+    }
+  }
+
+  screen_logic() {
+    let [_x_start, _y_start, _width, _height] = this.screen.data_for_render
+
     let x_start = _x_start / this.scale_x
     let y_start = _y_start / this.scale_y
 

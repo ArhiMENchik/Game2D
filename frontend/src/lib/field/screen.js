@@ -1,3 +1,5 @@
+import {Element} from "@/lib/units/element";
+
 export class Screen {
   constructor(x_start, y_start, width, height) {
     this.x_start = x_start
@@ -5,6 +7,12 @@ export class Screen {
 
     this.width = width
     this.height = height
+
+    this.set_element_offset()
+  }
+
+  set_element_offset() {
+    Element.set_offset(this.x_start, this.y_start)
   }
 
   get x_end() {
@@ -17,18 +25,22 @@ export class Screen {
 
   increase_x(value = 5) {
     this.x_start += value
+    this.set_element_offset()
   }
 
   decrease_x(value = 5) {
     this.x_start -= value
+    this.set_element_offset()
   }
 
   increase_y(value = 5) {
     this.y_start += value
+    this.set_element_offset()
   }
 
   decrease_y(value = 5) {
     this.y_start -= value
+    this.set_element_offset()
   }
 
   pos_in_world(x, y) {

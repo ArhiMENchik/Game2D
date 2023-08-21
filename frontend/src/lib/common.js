@@ -1,4 +1,9 @@
 export default class Common {
+  static get_random_int(min, max) {
+    min = Math.floor(min)
+    max = Math.ceil(max)
+    return Math.floor(Math.random() * (max - min + 1)) + min
+  }
 
   static calc_dist(x1, y1, x2, y2) {
     let deltaX = x2 - x1

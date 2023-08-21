@@ -2,6 +2,66 @@ export class Canvas {
   constructor(canvas) {
     this.canvas = canvas
     this.ctx = this.canvas.getContext("2d")
+
+    this.contextmenu_callback = () => {
+    }
+    this.mousedown_callback = () => {
+    }
+    this.mousemove_callback = () => {
+    }
+    this.mouseup_callback = () => {
+    }
+    this.mouseleave_callback = () => {
+    }
+    this.mouseenter_callback = () => {
+    }
+
+    this.add_event_listeners()
+  }
+
+  add_event_listeners() {
+    this.canvas.addEventListener('contextmenu', (event) => {
+      this.contextmenu_callback(event)
+    })
+    this.canvas.addEventListener('mousedown', (event) => {
+      this.mousedown_callback(event)
+    })
+    this.canvas.addEventListener('mousemove', (event) => {
+      this.mousemove_callback(event)
+    })
+    this.canvas.addEventListener('mouseup', (event) => {
+      this.mouseup_callback(event)
+    })
+    this.canvas.addEventListener('mouseleave', (event) => {
+      this.mouseleave_callback(event)
+    })
+    this.canvas.addEventListener('mouseenter', (event) => {
+      this.mouseenter_callback(event)
+    })
+  }
+
+  contextmenu(func) {
+    this.contextmenu_callback = func
+  }
+
+  mousedown(func) {
+    this.mousedown_callback = func
+  }
+
+  mousemove(func) {
+    this.mousemove_callback = func
+  }
+
+  mouseup(func) {
+    this.mouseup_callback = func
+  }
+
+  mouseleave(func) {
+    this.mouseleave_callback = func
+  }
+
+  mouseenter(func) {
+    this.mouseenter_callback = func
   }
 
   get width() {
@@ -47,7 +107,7 @@ export class Canvas {
     this.ctx.fillRect(x - glow_size, y - glow_size, width + glow_size * 2, height + glow_size * 2)
   }
 
-  fill_text(text, x, y, font, color) {
+  fill_text(text, x, y, font, color = 'rgb(255, 2555, 255)') {
     this.ctx.font = font
     this.ctx.fillStyle = color
 

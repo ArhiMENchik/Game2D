@@ -1,4 +1,5 @@
 import Common from "@/lib/common";
+import {Player} from "@/lib/player";
 
 export class Element {
   static id = 0
@@ -11,6 +12,13 @@ export class Element {
     tile: 2,
     dummy: 3,
   }
+
+  static set_offset(x, y) {
+    Element.offset_x = x
+    Element.offset_y = y
+  }
+
+  static elements_by_id = {}
 
   constructor(sprite, x_sprite, y_sprite, x_field, y_field, type, width = 32, height = 32) {
     this.id = ++Element.id
@@ -29,6 +37,8 @@ export class Element {
     this.prevent_action = false
 
     this.type = type
+
+    Element.elements_by_id[this.id] = this
   }
 
   get x_field_central() {
@@ -76,8 +86,10 @@ export class Element {
 }
 
 export class Unit extends Element {
-  constructor(sprite, x_sprite, y_sprite, x_field, y_filed, max_hp = 10, max_mp = 10, speed = 2) {
+  constructor(sprite, x_sprite, y_sprite, x_field, y_filed, player_id, max_hp = 10, max_mp = 10, speed = 2) {
     super(sprite, x_sprite, y_sprite, x_field, y_filed, Element.element_type.unit)
+    this.player_id = player_id
+
     this.max_hp = max_hp
     this.max_mp = max_mp
 
@@ -152,6 +164,18 @@ export class Unit extends Element {
     let green = (((this.hp * 100) / this.max_hp) * 255) / 100
 
     return `rgb(${red}, ${green}, 0)`
+  }
+
+  get hp_percent() {
+    return this.hp / this.max_hp
+  }
+
+  get mp_percent() {
+    return this.hp / this.max_hp
+  }
+
+  get player_name() {
+    return Player.player_by_id[this.player_id].name
   }
 }
 

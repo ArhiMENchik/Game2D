@@ -62,8 +62,12 @@ export class Panel {
 
       data = [u.sprite.img, u.x_sprite, u.y_sprite, u.width, u.height, x, y, u.width, u.height]
 
-      this.canvas.draw_line(x, y + u.height + 5, x + u.width, y + u.height + 5, u.hp_color, 5)
-      this.canvas.draw_line(x, y + u.height + 11, x + u.width, y + u.height + 11, 'rgb(0, 0, 255)', 5)
+      this.canvas.draw_line(x, y + u.height + 5, x + u.width, y + u.height + 5, 'rgba(255, 255, 255, .9)', 5)
+      this.canvas.draw_line(x, y + u.height + 5, x + u.width * u.hp_percent, y + u.height + 5, u.hp_color, 5)
+
+      this.canvas.draw_line(x, y + u.height + 11, x + u.width, y + u.height + 11, 'rgba(255, 255, 255, .9)', 5)
+      this.canvas.draw_line(x, y + u.height + 11, x + u.width * u.mp_percent, y + u.height + 11, 'rgb(0, 0, 255)', 5)
+
       this.canvas.render(data)
     }
   }

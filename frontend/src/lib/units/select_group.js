@@ -5,7 +5,7 @@ export class SelectGroup {
     this.callback = () => {
     }
 
-    const self = this
+    let self = this
 
     this._proxy_units = new Proxy(self._units, {
       set(target, p, newValue, receiver) {
@@ -13,7 +13,6 @@ export class SelectGroup {
 
         if (target.length > 0) {
           target[0].is_select = true
-          console.log(true)
         }
 
         self.callback()
@@ -24,6 +23,8 @@ export class SelectGroup {
   }
 
   add(u) {
+    if (u.player_id !== 1) return
+
     if (this._proxy_units.filter(f_u => f_u.id === u.id).length === 0) {
       this._proxy_units.push(u)
       u.is_picked = true
