@@ -1,61 +1,43 @@
 export class SelectGroup {
   constructor() {
     this._units = []
-
-    this.callback = () => {
-    }
-
-    let self = this
-
-    this._proxy_units = new Proxy(self._units, {
-      set(target, p, newValue, receiver) {
-        Reflect.set(target, p, newValue, receiver)
-
-        if (target.length > 0) {
-          target[0].is_select = true
-        }
-
-        self.callback()
-
-        return true
-      }
-    })
   }
 
   add(u) {
-    if (u.player_id !== 1) return
+    // if (u.is_enemy) return
 
-    if (this._proxy_units.filter(f_u => f_u.id === u.id).length === 0) {
-      this._proxy_units.push(u)
+    if (this._units.filter(f_u => f_u.id === u.id).length === 0) {
+      this._units.push(u)
       u.is_picked = true
+      u.is_select = true
     }
   }
 
   remove(u) {
-    let indexToDelete = this._proxy_units.findIndex(f_u => f_u.id === u.id)
+    let indexToDelete = this._units.findIndex(f_u => f_u.id === u.id)
 
     if (indexToDelete !== -1) {
-      this._proxy_units.splice(indexToDelete, 1)
+      this._units.splice(indexToDelete, 1)
       u.is_picked = false
       u.is_select = false
     }
   }
 
   reset() {
-    for (let u of this._proxy_units) {
+    for (let u of this._units) {
       u.is_picked = false
       u.is_select = false
     }
 
-    this._proxy_units.splice(0, this._proxy_units.length)
+    this._units.splice(0, this._units.length)
   }
 
   get units() {
-    return this._proxy_units
+    return this._units
   }
 
   set units(value) {
-    if (this._proxy_units.length > 0) {
+    if (this._units.length > 0) {
       this.reset()
     }
 
@@ -69,7 +51,7 @@ export class SelectGroup {
   }
 
   get is_empty() {
-    return this._proxy_units.length === 0
+    return this._units.length === 0
   }
 
   on_change(func) {

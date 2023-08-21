@@ -38,29 +38,26 @@ export class Panel {
     this.canvas.draw_line(0, 100, this.unit_info.width, 100, 'rgb(0, 255, 0)')
 
     for (let u of this.select_group.units) {
-      let data
-      let x
-      let y
-
-      if (u.is_select) {
-        x = 50
-        y = 0
-        data = [u.sprite.img, u.x_sprite, u.y_sprite, 32, 32, x, y, 96, 96]
-
-        this.canvas.render(data)
-        this.canvas.fill_text(`${u.hp}|${u.max_hp}`, 150, 20, '15px Arial', 'rgb(0, 255, 0)')
-        this.canvas.fill_text(`${u.mp}|${u.max_mp}`, 150, 40, '15px Arial', 'rgb(0, 0, 255)')
-      }
-
       if (x_offset > Math.floor((this.canvas.width - this.unit_info.width + 5) / 64)) {
         x_offset = 0
         y_offset++
       }
 
-      x = x_offset++ * 64 + this.unit_info.width + 5
-      y = y_offset * 64
+      let x = x_offset++ * 64 + this.unit_info.width + 5
+      let y = y_offset * 64
 
-      data = [u.sprite.img, u.x_sprite, u.y_sprite, u.width, u.height, x, y, u.width, u.height]
+      if (u.is_select) {
+        let x = 50
+        let y = 0
+        let data = [u.sprite.img, u.x_sprite, u.y_sprite, 32, 32, x, y, 96, 96]
+
+        this.canvas.render(data)
+
+        this.canvas.fill_text(`${u.hp}|${u.max_hp}`, 150, 20, '15px Arial', 'rgb(0, 255, 0)')
+        this.canvas.fill_text(`${u.mp}|${u.max_mp}`, 150, 40, '15px Arial', 'rgb(0, 0, 255)')
+      }
+
+      let data = [u.sprite.img, u.x_sprite, u.y_sprite, u.width, u.height, x, y, u.width, u.height]
 
       this.canvas.draw_line(x, y + u.height + 5, x + u.width, y + u.height + 5, 'rgba(255, 255, 255, .9)', 5)
       this.canvas.draw_line(x, y + u.height + 5, x + u.width * u.hp_percent, y + u.height + 5, u.hp_color, 5)

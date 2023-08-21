@@ -49,7 +49,7 @@ export class Game {
       let x = event.clientX - rect.left
       let y = event.clientY - rect.top
 
-      this.move_logic(x, y)
+      this.action_logic(x, y)
     })
 
     this.game_field.mousedown((event) => {
@@ -105,7 +105,6 @@ export class Game {
   create_player(count = 2) {
     for (let i = 1; i <= count; i++) {
       this.players.push(new Player())
-      console.log(this.players)
     }
   }
 
@@ -143,9 +142,20 @@ export class Game {
     setTimeout(this.main.bind(this), 1000 / 60)
   }
 
-  move_logic(x, y) {
+  action_logic(x, y) {
+    let pos_field = this.screen.pos_in_world(x, y)
+
+    let target = null
+
+    for (let u of this.units) {
+      if (u.click_detection(pos_field.x, pos_field.y) && u.is_enemy) {
+        target = u
+        break
+      }
+    }
+
     for (let u of this.select_group.units) {
-      let pos_field = this.screen.pos_in_world(x, y)
+      u.target = target
       u.set_new_pos(pos_field.x, pos_field.y)
     }
   }
@@ -206,17 +216,17 @@ export class Game {
         1, 'rgba(119, 255, 0, 0.4)', 'rgba(255, 255, 0, 0)')
     }
 
-    if (u.x_field !== u.x_move && u.y_field !== u.y_move) {
-      this.game_field.draw_line(u.x_screen_central, u.y_screen_central, u.x_screen_move_central, u.y_screen_move_central, 'rgb(119, 255, 0)')
+    if (u.x_field !== u.x_action && u.y_field !== u.y_action) {
+      this.game_field.draw_line(u.x_screen_central, u.y_screen_central, u.x_screen_action_central, u.y_screen_action_central, 'rgb(119, 255, 0)')
     }
 
-    u._move()
+    u._action()
   }
 
   check_collision(u) {
     for (let e of [...this.tiles, ...this.dummies]) {
       // todo update block logic
-      let potential_pos = u.potential_move()
+      let potential_pos = u.potential_action()
       let pos_field = this.screen.pos_in_world(potential_pos.x_p, potential_pos.y_p)
       let collision = Common.check_collision(pos_field.x - 16, pos_field.y - 16, e.x_field, e.y_field)
       if (collision && e.type === Element.element_type.tile && e.is_block) {
@@ -238,7 +248,9 @@ export class Game {
       if (this.screen.in_screen(e.x_field_central, e.y_field_central)) {
         this.game_field.render(e.data_for_render)
         if (e.type === Element.element_type.unit) {
-          this.game_field.fill_text(e.player_name, e.x_screen, e.y_screen - 1, '10px Arial')
+          let u = e
+
+          this.game_field.fill_text(u.player_name, u.x_screen, u.y_screen - 1, '10px Arial')
         }
       }
     }
