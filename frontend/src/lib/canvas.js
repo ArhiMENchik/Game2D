@@ -47,6 +47,13 @@ export class Canvas {
     this.ctx.fillRect(x - glow_size, y - glow_size, width + glow_size * 2, height + glow_size * 2)
   }
 
+  fill_text(text, x, y, font, color) {
+    this.ctx.font = font
+    this.ctx.fillStyle = color
+
+    this.ctx.fillText(text, x, y)
+  }
+
   render(data) {
     this.ctx.drawImage(...data)
   }

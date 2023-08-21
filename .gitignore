@@ -6,3 +6,4 @@ media/
 .idea/
 
 /frontend/src/assets/css/*.map
+/frontend/src/assets/css/color.css

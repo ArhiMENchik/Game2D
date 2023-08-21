@@ -11,6 +11,11 @@ export class SelectGroup {
       set(target, p, newValue, receiver) {
         Reflect.set(target, p, newValue, receiver)
 
+        if (target.length > 0) {
+          target[0].is_select = true
+          console.log(true)
+        }
+
         self.callback()
 
         return true
@@ -31,12 +36,14 @@ export class SelectGroup {
     if (indexToDelete !== -1) {
       this._proxy_units.splice(indexToDelete, 1)
       u.is_picked = false
+      u.is_select = false
     }
   }
 
   reset() {
     for (let u of this._proxy_units) {
       u.is_picked = false
+      u.is_select = false
     }
 
     this._proxy_units.splice(0, this._proxy_units.length)

@@ -88,6 +88,8 @@ export class Unit extends Element {
 
     this.x_move = this.x_field
     this.y_move = this.y_field
+
+    this.is_select = false
   }
 
   get x_screen_move_central() {
