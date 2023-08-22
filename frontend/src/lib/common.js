@@ -21,12 +21,12 @@ export default class Common {
     return {new_x, new_y}
   }
 
-  static check_collision(x1, y1, x2, y2) {
-    let r1 = x1 + 32
-    let b1 = y1 + 32
+  static check_collision(x1, y1, x2, y2, width_1, height_1, width_2, height_2) {
+    let r1 = x1 + width_1
+    let b1 = y1 + height_1
 
-    let r2 = x2 + 32
-    let b2 = y2 + 32
+    let r2 = x2 + width_2
+    let b2 = y2 + height_2
 
     return !(r1 <= x2 || x1 > r2 ||
       b1 <= y2 || y1 > b2)

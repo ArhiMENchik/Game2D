@@ -230,8 +230,9 @@ export class Game {
       // todo update block logic
       let potential_pos = u.potential_action()
       let pos_field = this.screen.pos_in_world(potential_pos.x_p, potential_pos.y_p)
-      let collision = Common.check_collision(pos_field.x - 16, pos_field.y - 16, e.x_field, e.y_field)
-      if (collision && e.type === Element.element_type.tile && e.is_block) {
+      let collision = Common.check_collision(pos_field.x - 16, pos_field.y - 16, e.x_field, e.y_field,
+        u.width, u.height, e.width, e.height)
+      if (collision ) {
         u.prevent_act()
       }
     }

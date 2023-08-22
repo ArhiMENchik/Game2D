@@ -137,6 +137,14 @@ export class Unit extends Element {
     if (this.target) {
       this.command = Unit.command.attack
 
+      let collision = Common.check_collision(this.x_field, this.y_field, this.target.x_field, this.target.y_field,
+        this.width, this.height, this.target.width, this.target.height)
+
+      if (collision) {
+
+        return
+      }
+
       this.x_action = this.target.x_field
       this.y_action = this.target.y_field
 
