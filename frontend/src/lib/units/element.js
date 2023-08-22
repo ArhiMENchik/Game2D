@@ -203,8 +203,8 @@ export class Unit extends Element {
     return Player.player_by_id[this.player_id].name
   }
 
-  get is_enemy() {
-    return this.player_id !== 1
+  is_enemy_for_player(player_id) {
+    return this.player_id !== player_id
   }
 }
 

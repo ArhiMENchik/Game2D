@@ -1,10 +1,11 @@
 export class SelectGroup {
-  constructor() {
+  constructor(player) {
     this._units = []
+    this.player = player
   }
 
   add(u) {
-    // if (u.is_enemy) return
+    // if (u.is_enemy_for_player(this.player.id)) return
 
     if (this._units.filter(f_u => f_u.id === u.id).length === 0) {
       this._units.push(u)

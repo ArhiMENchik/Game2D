@@ -14,11 +14,11 @@ import {Panel} from "@/lib/game/panel";
 import {Player} from "@/lib/player";
 
 export class Game {
-  constructor(game_field, minimap, game_panel) {
+  constructor(game_field, minimap, game_panel, player) {
     this.game_field = new Canvas(game_field)
 
     this.selection_area = new SelectionArea()
-    this.select_group = new SelectGroup()
+    this.select_group = new SelectGroup(player)
     this.control_groups = new ControlGroups()
 
     this.full_field = new FullField(game_field.width, game_field.height, 5)
@@ -27,7 +27,9 @@ export class Game {
     this.minimap = new Minimap(minimap, this.full_field.width, this.full_field.height, this.screen, this.select_group)
     this.game_panel = new Panel(game_panel, this.select_group)
 
-    this.players = []
+    this.players = [player]
+
+    this.main_player = player
 
     this.units = []
     this.tiles = []
@@ -85,7 +87,7 @@ export class Game {
       }
     })
 
-    this.game_field.canvas.addEventListener('mouseleave', () => {
+    this.game_field.mouseleave(() => {
       this.selection_area.reset_pos()
     })
 
@@ -118,7 +120,7 @@ export class Game {
 
       let pos_field = this.screen.pos_in_world(x_screen, y_screen)
 
-      let unit = new Unit(this.sprites, x_sprite, y_sprite, pos_field.x, pos_field.y, Common.get_random_int(1, 2))
+      let unit = new Unit(this.sprites, x_sprite, y_sprite, pos_field.x, pos_field.y, Common.get_random_int(1, Player.player_count))
 
       this.units.push(unit)
     }
@@ -148,7 +150,7 @@ export class Game {
     let target = null
 
     for (let u of this.units) {
-      if (u.click_detection(pos_field.x, pos_field.y) && u.is_enemy) {
+      if (u.click_detection(pos_field.x, pos_field.y) && u.is_enemy_for_player(this.main_player.id)) {
         target = u
         break
       }

@@ -10,6 +10,7 @@
 
 <script>
 import {Game} from "@/lib/game/game";
+import {Player} from "@/lib/player";
 
 export default {
   name: "Game",
@@ -23,7 +24,7 @@ export default {
     let minimap = document.getElementById('minimap')
     let game_panel = document.getElementById('game-panel')
 
-    this.game = new Game(game_field, minimap, game_panel)
+    this.game = new Game(game_field, minimap, game_panel, new Player())
   },
   methods() {
   },

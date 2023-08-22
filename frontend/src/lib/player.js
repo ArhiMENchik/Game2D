@@ -3,6 +3,10 @@ export class Player {
 
   static player_by_id = {}
 
+  static get player_count() {
+    return Object.keys(Player.player_by_id).length
+  }
+
   constructor(name = '') {
     this.id = ++Player.id
 

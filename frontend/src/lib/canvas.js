@@ -15,6 +15,8 @@ export class Canvas {
     }
     this.mouseenter_callback = () => {
     }
+    this.wheel_callback = () => {
+    }
 
     this.add_event_listeners()
   }
@@ -37,6 +39,9 @@ export class Canvas {
     })
     this.canvas.addEventListener('mouseenter', (event) => {
       this.mouseenter_callback(event)
+    })
+    this.canvas.addEventListener('wheel', (event) => {
+      this.wheel_callback(event)
     })
   }
 
@@ -62,6 +67,10 @@ export class Canvas {
 
   mouseenter(func) {
     this.mouseenter_callback = func
+  }
+
+  wheel(func) {
+    this.wheel_callback = func
   }
 
   get width() {
