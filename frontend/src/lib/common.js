@@ -31,4 +31,19 @@ export default class Common {
     return !(r1 <= x2 || x1 > r2 ||
       b1 <= y2 || y1 > b2)
   }
+
+  static delete_element_from_array(array, elem) {
+    let indexToDelete = array.findIndex(f_e => f_e === elem)
+
+    if (indexToDelete !== -1) {
+      array.splice(indexToDelete, 1)
+    }
+  }
+}
+
+Array.prototype.delete = function (elem) {
+  let indexToDelete = this.findIndex(f_e => f_e === elem)
+  if (indexToDelete !== -1) {
+    this.splice(indexToDelete, 1)
+  }
 }

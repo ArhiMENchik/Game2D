@@ -1,44 +1,48 @@
+import {Element} from '@/lib/units/element';
+
 export class SelectGroup {
-  constructor(player) {
-    this._units = []
-    this.player = player
+  constructor(player_id) {
+    this._units_id = []
+    this.player_id = player_id
   }
 
   add(u) {
     // if (u.is_enemy_for_player(this.player.id)) return
 
-    if (this._units.filter(f_u => f_u.id === u.id).length === 0) {
-      this._units.push(u)
+    if (this._units_id.filter(u_id => u_id === u.id).length === 0) {
+      this._units_id.push(u.id)
       u.is_picked = true
       u.is_select = true
     }
   }
 
   remove(u) {
-    let indexToDelete = this._units.findIndex(f_u => f_u.id === u.id)
+    let indexToDelete = this._units_id.findIndex(f_u => f_u.id === u.id)
 
     if (indexToDelete !== -1) {
-      this._units.splice(indexToDelete, 1)
+      this._units_id.splice(indexToDelete, 1)
       u.is_picked = false
       u.is_select = false
     }
   }
 
   reset() {
-    for (let u of this._units) {
+    for (let u_id of this._units_id) {
+      let u = Element.elements_by_id[u_id]
+
       u.is_picked = false
       u.is_select = false
     }
 
-    this._units.splice(0, this._units.length)
+    this._units_id.splice(0, this._units_id.length)
   }
 
-  get units() {
-    return this._units
+  get units_id() {
+    return this._units_id
   }
 
-  set units(value) {
-    if (this._units.length > 0) {
+  set units_id(value) {
+    if (this._units_id.length > 0) {
       this.reset()
     }
 
@@ -52,7 +56,7 @@ export class SelectGroup {
   }
 
   get is_empty() {
-    return this._units.length === 0
+    return this._units_id.length === 0
   }
 
   on_change(func) {

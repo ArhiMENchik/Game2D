@@ -11,14 +11,14 @@ export class ControlGroups {
     this._control_groups = {}
   }
 
-  add(keycode, units) {
-    this._control_groups[keycode] = new ControlGroup(keycode, units)
+  add(keycode, units_id) {
+    this._control_groups[keycode] = new ControlGroup(keycode, units_id)
   }
 }
 
 class ControlGroup {
-  constructor(keycode, units) {
+  constructor(keycode, units_id) {
     this.keycode = keycode
-    this.units = units
+    this.units_id = units_id
   }
 }

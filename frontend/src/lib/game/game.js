@@ -2,7 +2,7 @@ import {Element} from "@/lib/units/element";
 import {Screen} from "@/lib/field/screen";
 import {Sprite} from "@/lib/sprite";
 import src from "@/assets/image/game/game_full_sprites.png";
-import {Unit} from "@/lib/units/element";
+import {Unit} from "@/lib/units/unit";
 import {FullField} from "@/lib/field/full_field";
 import {Canvas} from "@/lib/canvas";
 import {SelectionArea} from "@/lib/selection_area";
@@ -18,7 +18,7 @@ export class Game {
     this.game_field = new Canvas(game_field)
 
     this.selection_area = new SelectionArea()
-    this.select_group = new SelectGroup(player)
+    this.select_group = new SelectGroup(player.id)
     this.control_groups = new ControlGroups()
 
     this.full_field = new FullField(game_field.width, game_field.height, 5)
@@ -31,9 +31,7 @@ export class Game {
 
     this.main_player = player
 
-    this.units = []
-    this.tiles = []
-    this.dummies = []
+    this.elements_id = []
 
     this.sprites = new Sprite(src)
     this.sprites.on_ready(this.init.bind(this))
@@ -122,7 +120,7 @@ export class Game {
 
       let unit = new Unit(this.sprites, x_sprite, y_sprite, pos_field.x, pos_field.y, Common.get_random_int(1, Player.player_count))
 
-      this.units.push(unit)
+      this.elements_id.push(unit.id)
     }
   }
 
@@ -134,9 +132,18 @@ export class Game {
     this.minimap.screen_logic()
 
 
-    for (let u of this.units) {
-      this.unit_logic(u)
-      this.minimap.unit_draw(u)
+    for (let e_id of this.elements_id) {
+      let e = Element.elements_by_id[e_id]
+      if (!e) {
+        this.elements_id.delete(e_id)
+        return
+      }
+
+      if (e.type === Element.element_type.unit) {
+        let u = e
+        this.unit_logic(u)
+        this.minimap.unit_draw(u)
+      }
     }
 
     this.render()
@@ -149,33 +156,57 @@ export class Game {
 
     let target = null
 
-    for (let u of this.units) {
-      if (u.click_detection(pos_field.x, pos_field.y) && u.is_enemy_for_player(this.main_player.id)) {
-        target = u
-        break
+    for (let e_id of this.elements_id) {
+      let e = Element.elements_by_id[e_id]
+      if (!e) {
+        console.log(this.elements_id)
+        this.elements_id.delete(e_id)
+        return
+        console.log(this.elements_id)
+      }
+
+      if (e.type === Element.element_type.unit) {
+        let u = e
+
+        if (u.click_detection(pos_field.x, pos_field.y) && u.is_enemy_for_player(this.main_player.id)) {
+          target = u
+          break
+        }
       }
     }
 
-    for (let u of this.select_group.units) {
+    for (let u_id of this.select_group.units_id) {
+      let u = Element.elements_by_id[u_id]
+
       u.target = target
       u.set_new_pos(pos_field.x, pos_field.y)
     }
   }
 
   click_logic(x, y, shift_key) {
-    for (let u of this.units) {
-      let pos_field = this.screen.pos_in_world(x, y)
-      if (u.click_detection(pos_field.x, pos_field.y)) {
-        if (shift_key) {
-          if (u.is_picked) {
-            this.select_group.remove(u)
+    for (let e_id of this.elements_id) {
+      let e = Element.elements_by_id[e_id]
+      if (!e) {
+        this.elements_id.delete(e_id)
+        return
+      }
+
+      if (e.type === Element.element_type.unit) {
+        let u = e
+
+        let pos_field = this.screen.pos_in_world(x, y)
+        if (u.click_detection(pos_field.x, pos_field.y)) {
+          if (shift_key) {
+            if (u.is_picked) {
+              this.select_group.remove(u)
+            } else {
+              this.select_group.add(u)
+            }
           } else {
-            this.select_group.add(u)
+            this.select_group.units_id = [u]
           }
-        } else {
-          this.select_group.units = [u]
+          break
         }
-        break
       }
     }
   }
@@ -183,11 +214,11 @@ export class Game {
   control_groups_logic(event) {
     if (event.keyCode >= 49 && event.keyCode <= 57) {
       if (event.ctrlKey) {
-        this.control_groups.add(event.keyCode, this.select_group.units)
+        this.control_groups.add(event.keyCode, this.select_group.units_id)
       } else {
         let control_group = this.control_groups.get_group(event.keyCode)
         if (control_group) {
-          this.select_group.units = control_group.units
+          this.select_group.units_id = control_group.units_id
         }
       }
     }
@@ -226,14 +257,22 @@ export class Game {
   }
 
   check_collision(u) {
-    for (let e of [...this.tiles, ...this.dummies]) {
+    for (let e_id of this.elements_id) {
       // todo update block logic
-      let potential_pos = u.potential_action()
-      let pos_field = this.screen.pos_in_world(potential_pos.x_p, potential_pos.y_p)
-      let collision = Common.check_collision(pos_field.x - 16, pos_field.y - 16, e.x_field, e.y_field,
-        u.width, u.height, e.width, e.height)
-      if (collision ) {
-        u.prevent_act()
+      let e = Element.elements_by_id[e_id]
+      if (!e) {
+        this.elements_id.delete(e_id)
+        return
+      }
+
+      if (e.type === Element.element_type.dummy || e.type === Element.element_type.tile) {
+        let potential_pos = u.potential_action()
+        let pos_field = this.screen.pos_in_world(potential_pos.x_p, potential_pos.y_p)
+        let collision = Common.check_collision(pos_field.x - 16, pos_field.y - 16, e.x_field, e.y_field,
+          u.width, u.height, e.width, e.height)
+        if (collision) {
+          u.prevent_act()
+        }
       }
     }
   }
@@ -247,7 +286,14 @@ export class Game {
   }
 
   render() {
-    for (let e of [...this.units, ...this.dummies, ...this.tiles]) {
+    for (let e_id of this.elements_id) {
+      let e = Element.elements_by_id[e_id]
+      if (!e) {
+        this.elements_id.delete(e_id)
+        return
+        return
+      }
+
       if (this.screen.in_screen(e.x_field_central, e.y_field_central)) {
         this.game_field.render(e.data_for_render)
         if (e.type === Element.element_type.unit) {

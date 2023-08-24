@@ -1,4 +1,5 @@
 import {Canvas} from "@/lib/canvas";
+import {Element} from "@/lib/units/element";
 
 export class Minimap {
   constructor(canvas, g_f_width, g_f_height, screen, select_group) {
@@ -53,7 +54,8 @@ export class Minimap {
     x = x * this.scale_x
     y = y * this.scale_y
 
-    for (let u of this.select_group.units) {
+    for (let u_id of this.select_group.units_id) {
+      let u = Element.elements_by_id[u_id]
       u.set_new_pos(x, y)
     }
   }
