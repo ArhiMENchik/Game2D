@@ -159,10 +159,8 @@ export class Game {
     for (let e_id of this.elements_id) {
       let e = Element.elements_by_id[e_id]
       if (!e) {
-        console.log(this.elements_id)
         this.elements_id.delete(e_id)
         return
-        console.log(this.elements_id)
       }
 
       if (e.type === Element.element_type.unit) {
@@ -290,7 +288,6 @@ export class Game {
       let e = Element.elements_by_id[e_id]
       if (!e) {
         this.elements_id.delete(e_id)
-        return
         return
       }
 

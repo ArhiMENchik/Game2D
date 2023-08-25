@@ -10,6 +10,7 @@ export class SelectGroup {
     // if (u.is_enemy_for_player(this.player.id)) return
 
     if (this._units_id.filter(u_id => u_id === u.id).length === 0) {
+      console.log(u)
       this._units_id.push(u.id)
       u.is_picked = true
       u.is_select = true
@@ -17,7 +18,7 @@ export class SelectGroup {
   }
 
   remove(u) {
-    let indexToDelete = this._units_id.findIndex(f_u => f_u.id === u.id)
+    let indexToDelete = this._units_id.findIndex(u_id => u_id === u.id)
 
     if (indexToDelete !== -1) {
       this._units_id.splice(indexToDelete, 1)
