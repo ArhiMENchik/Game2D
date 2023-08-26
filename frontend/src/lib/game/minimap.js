@@ -56,6 +56,10 @@ export class Minimap {
 
     for (let u_id of this.select_group.units_id) {
       let u = Element.elements_by_id[u_id]
+      if (!u) {
+        this.select_group.units_id.delete(u_id)
+        return
+      }
       u.set_new_pos(x, y)
     }
   }

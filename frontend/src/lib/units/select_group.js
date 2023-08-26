@@ -10,7 +10,6 @@ export class SelectGroup {
     // if (u.is_enemy_for_player(this.player.id)) return
 
     if (this._units_id.filter(u_id => u_id === u.id).length === 0) {
-      console.log(u)
       this._units_id.push(u.id)
       u.is_picked = true
       u.is_select = true
@@ -30,6 +29,10 @@ export class SelectGroup {
   reset() {
     for (let u_id of this._units_id) {
       let u = Element.elements_by_id[u_id]
+      if (!u) {
+        this.units_id.delete(u_id)
+        return
+      }
 
       u.is_picked = false
       u.is_select = false

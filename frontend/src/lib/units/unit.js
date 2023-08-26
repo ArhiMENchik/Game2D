@@ -10,8 +10,8 @@ export class Unit extends Element {
   }
 
   constructor(sprite, x_sprite, y_sprite, x_field, y_filed,
-              player_id, max_hp = 10, max_mp = 10, damage = 10,
-              speed = 2, attack_speed = 1000) {
+              player_id, max_hp = 10, max_mp = 10, damage = 2,
+              speed = 2, attack_speed = 1000, attack_range = 32) {
     super(sprite, x_sprite, y_sprite, x_field, y_filed, Element.element_type.unit)
     this.player_id = player_id
 
@@ -24,6 +24,7 @@ export class Unit extends Element {
     this.damage = damage
 
     this.attack_speed = attack_speed
+    this.attack_range = attack_range
     this.last_attack = null
 
     this.speed = speed
@@ -61,10 +62,10 @@ export class Unit extends Element {
     if (this.target) {
       this.command = Unit.command.attack
 
-      let collision = Common.check_collision(this.x_field, this.y_field, this.target.x_field, this.target.y_field,
-        this.width, this.height, this.target.width, this.target.height)
+      let distance = Common.calc_dist(this.x_field_central, this.y_field_central,
+        this.target.x_field_central, this.target.y_field_central)
 
-      if (collision) {
+      if (distance <= this.attack_range) {
         if (!this.last_attack) {
           this.refresh_last_attack()
           return
@@ -75,8 +76,8 @@ export class Unit extends Element {
           this.refresh_last_attack()
 
           if (this.target.is_died) {
-            this.target = null
             this.last_attack = null
+            this.stop()
           }
         }
 
@@ -171,5 +172,12 @@ export class Unit extends Element {
   kill() {
     Element.elements_by_id[this.id] = null
     delete Element.elements_by_id[this.id]
+  }
+
+  stop() {
+    this.target = null
+    this.x_action = this.x_field
+    this.y_action = this.y_field
+    this.command = Unit.command.stop
   }
 }

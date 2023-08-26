@@ -24,22 +24,15 @@ export class Panel {
     let x_offset = 0
     let y_offset = 0
 
-    // this.canvas.draw_rect_with_lines(
-    //   {
-    //     color: 'rgb(0, 255, 0)',
-    //     start: [this.x_start, this.y_start],
-    //     up: [this.x_start, this.y_start < this.y_end ? this.y_start + this.height : this.y_start - this.height],
-    //     right: [this.x_start < this.x_end ? this.x_start + this.width : this.x_start - this.width, this.y_end],
-    //     bottom: [this.x_end, this.y_start],
-    //     left: [this.x_start, this.y_start]
-    //   }
-    // )
-
     this.canvas.draw_line(this.unit_info.width, 0, this.unit_info.width, this.unit_info.height, 'rgb(0, 255, 0)')
     this.canvas.draw_line(0, 100, this.unit_info.width, 100, 'rgb(0, 255, 0)')
 
     for (let u_id of this.select_group.units_id) {
       let u = Element.elements_by_id[u_id]
+      if (!u) {
+        this.select_group.units_id.delete(u_id)
+        return
+      }
 
       if (x_offset > Math.floor((this.canvas.width - this.unit_info.width + 5) / 64)) {
         x_offset = 0
