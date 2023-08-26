@@ -1,4 +1,11 @@
 export default class Common {
+
+  static command = {
+    stop: 1,
+    move: 2,
+    attack: 3
+  }
+
   static get_random_int(min, max) {
     min = Math.floor(min)
     max = Math.ceil(max)

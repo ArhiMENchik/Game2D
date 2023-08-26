@@ -1,18 +1,13 @@
 import Common from "@/lib/common";
 import {Player} from "@/lib/player";
 import {Element} from "@/lib/units/element";
+import {Missile} from "@/lib/units/missile";
 
 export class Unit extends Element {
-  static command = {
-    stop: 'stop',
-    move: 'move',
-    attack: 'attack'
-  }
-
-  constructor(sprite, x_sprite, y_sprite, x_field, y_filed,
-              player_id, max_hp = 10, max_mp = 10, damage = 2,
-              speed = 2, attack_speed = 1000, attack_range = 32) {
-    super(sprite, x_sprite, y_sprite, x_field, y_filed, Element.element_type.unit)
+  constructor(player_id, model, x_field, y_field, size = 1,
+              max_hp = 10, max_mp = 10, speed = 2,
+              damage = 2, attack_speed = 1000, attack_range = 128, missile_model) {
+    super(model, x_field, y_field, Element.element_type.unit, size, speed)
     this.player_id = player_id
 
     this.max_hp = max_hp
@@ -24,19 +19,19 @@ export class Unit extends Element {
     this.damage = damage
 
     this.attack_speed = attack_speed
-    this.attack_range = attack_range
+    this.attack_range = attack_range ? attack_range : (this.width + this.height) / 2
     this.last_attack = null
-
-    this.speed = speed
-
-    this.x_action = this.x_field
-    this.y_action = this.y_field
+    this.missile_model = missile_model
 
     this.is_select = false
 
-    this.command = Unit.command.stop
+    this.command = Common.command.stop
 
-    this.target = null
+    this._target = null
+  }
+
+  get is_range() {
+    return this.attack_range > (this.width + this.height) / 2
   }
 
   get x_screen_action_central() {
@@ -50,17 +45,23 @@ export class Unit extends Element {
   set_new_pos(x_action, y_action) {
     this.x_action = x_action
     this.y_action = y_action
+
+    if (this.x_field !== this.x_action && this.y_field !== this.y_action) {
+      this.command = Common.command.move
+    }
   }
 
   _action() {
-    super._action()
     if (this.prevent_action) {
       this.prevent_action = false
       return
     }
 
-    if (this.target) {
-      this.command = Unit.command.attack
+    if (this.command === Common.command.attack) {
+      if (!this.target) {
+        this.last_attack = null
+        this.stop()
+      }
 
       let distance = Common.calc_dist(this.x_field_central, this.y_field_central,
         this.target.x_field_central, this.target.y_field_central)
@@ -72,11 +73,15 @@ export class Unit extends Element {
         }
 
         if ((new Date() - this.last_attack) >= this.attack_speed) {
-          this.target.take_damage(this.damage)
+          if (this.is_range) {
+            this.create_missile()
+          } else {
+            this.target.take_damage(this.damage)
+          }
+
           this.refresh_last_attack()
 
           if (this.target.is_died) {
-            this.last_attack = null
             this.stop()
           }
         }
@@ -87,29 +92,9 @@ export class Unit extends Element {
       this.x_action = this.target.x_field
       this.y_action = this.target.y_field
 
-    } else {
-      this.command = Unit.command.move
     }
 
-    if (this.speed > 0) {
-      let dist
-
-      dist = Common.calc_dist(this.x_field, this.y_field, this.x_action, this.y_action)
-
-      if (dist < this.speed) {
-        this.x_field = this.x_action
-        this.y_field = this.y_action
-
-        this.command = Unit.command.stop
-      }
-
-      if (this.x_field !== this.x_action && this.y_field !== this.y_action) {
-        let new_pos = Common.calc_new_pos(this.x_field, this.y_field, this.x_action, this.y_action, this.speed)
-
-        this.x_field += new_pos.new_x
-        this.y_field += new_pos.new_y
-      }
-    }
+    super._action()
   }
 
   potential_action() {
@@ -158,6 +143,11 @@ export class Unit extends Element {
     this.last_attack = new Date()
   }
 
+  create_missile() {
+    let missile = new Missile(this.id, this.target.id, this.missile_model,
+      this.x_field_central, this.y_field_central, 0.5, 4, Missile.animation.spin)
+  }
+
   take_damage(damage) {
     this.hp -= damage
     if (this.is_died) {
@@ -170,14 +160,25 @@ export class Unit extends Element {
   }
 
   kill() {
-    Element.elements_by_id[this.id] = null
-    delete Element.elements_by_id[this.id]
+    this.destroy()
   }
 
   stop() {
     this.target = null
     this.x_action = this.x_field
     this.y_action = this.y_field
-    this.command = Unit.command.stop
+  }
+
+  get target() {
+    return this._target
+  }
+
+  set target(value) {
+    this._target = value
+    if (value) {
+      this.command = Common.command.attack
+    } else {
+      this.command = Common.command.stop
+    }
   }
 }

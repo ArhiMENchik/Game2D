@@ -45,7 +45,9 @@ export class Panel {
       if (u.is_select) {
         let x = 50
         let y = 0
-        let data = [u.sprite.img, u.x_sprite, u.y_sprite, 32, 32, x, y, 96, 96]
+        let size_x = u.width * 3 <= 96 ? u.width * 3 : 96
+        let size_y = u.height * 3 <= 128 ? u.height * 3 : 128
+        let data = [...u.model.data, x, y, size_x, size_y]
 
         this.canvas.render(data)
 
@@ -53,7 +55,7 @@ export class Panel {
         this.canvas.fill_text(`${u.mp}|${u.max_mp}`, 150, 40, '15px Arial', 'rgb(0, 0, 255)')
       }
 
-      let data = [u.sprite.img, u.x_sprite, u.y_sprite, u.width, u.height, x, y, u.width, u.height]
+      let data = [...u.model.data, x, y, u.width, u.height]
 
       this.canvas.draw_line(x, y + u.height + 5, x + u.width, y + u.height + 5, 'rgba(255, 255, 255, .9)', 5)
       this.canvas.draw_line(x, y + u.height + 5, x + u.width * u.hp_percent, y + u.height + 5, u.hp_color, 5)

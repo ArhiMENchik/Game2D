@@ -1,6 +1,6 @@
 import {Element} from "@/lib/units/element";
 import {Screen} from "@/lib/field/screen";
-import {Sprite} from "@/lib/sprite";
+import {Model, Sprite} from "@/lib/sprite";
 import src from "@/assets/image/game/game_full_sprites.png";
 import {Unit} from "@/lib/units/unit";
 import {FullField} from "@/lib/field/full_field";
@@ -12,6 +12,7 @@ import Common from "@/lib/common";
 import {Minimap} from "@/lib/game/minimap";
 import {Panel} from "@/lib/game/panel";
 import {Player} from "@/lib/player";
+import {Missile} from "@/lib/units/missile";
 
 export class Game {
   constructor(game_field, minimap, game_panel, player) {
@@ -30,8 +31,6 @@ export class Game {
     this.players = [player]
 
     this.main_player = player
-
-    this.elements_id = []
 
     this.sprites = new Sprite(src)
     this.sprites.on_ready(this.init.bind(this))
@@ -118,9 +117,11 @@ export class Game {
 
       let pos_field = this.screen.pos_in_world(x_screen, y_screen)
 
-      let unit = new Unit(this.sprites, x_sprite, y_sprite, pos_field.x, pos_field.y, Common.get_random_int(1, Player.player_count))
+      let unit_model = new Model(this.sprites, x_sprite, y_sprite)
+      let missile_model = new Model(this.sprites, 45 * 32, 25 * 32)
 
-      this.elements_id.push(unit.id)
+      let unit = new Unit(Common.get_random_int(1, Player.player_count), unit_model, pos_field.x, pos_field.y)
+        .kwargs({missile_model: missile_model})
     }
   }
 
@@ -132,10 +133,10 @@ export class Game {
     this.minimap.screen_logic()
 
 
-    for (let e_id of this.elements_id) {
+    for (let e_id of Element.elements_id) {
       let e = Element.elements_by_id[e_id]
       if (!e) {
-        this.elements_id.delete(e_id)
+        Element.elements_id.delete(e_id)
         return
       }
 
@@ -144,6 +145,8 @@ export class Game {
         this.unit_logic(u)
         this.minimap.unit_draw(u)
       }
+
+      e._action()
     }
 
     this.render()
@@ -156,10 +159,10 @@ export class Game {
 
     let target = null
 
-    for (let e_id of this.elements_id) {
+    for (let e_id of Element.elements_id) {
       let e = Element.elements_by_id[e_id]
       if (!e) {
-        this.elements_id.delete(e_id)
+        Element.elements_id.delete(e_id)
         return
       }
 
@@ -180,16 +183,15 @@ export class Game {
         return
       }
 
-      u.target = target
-      u.set_new_pos(pos_field.x, pos_field.y)
+      target ? u.target = target : u.set_new_pos(pos_field.x, pos_field.y)
     }
   }
 
   click_logic(x, y, shift_key) {
-    for (let e_id of this.elements_id) {
+    for (let e_id of Element.elements_id) {
       let e = Element.elements_by_id[e_id]
       if (!e) {
-        this.elements_id.delete(e_id)
+        Element.elements_id.delete(e_id)
         return
       }
 
@@ -254,16 +256,14 @@ export class Game {
     if (u.x_field !== u.x_action && u.y_field !== u.y_action) {
       this.game_field.draw_line(u.x_screen_central, u.y_screen_central, u.x_screen_action_central, u.y_screen_action_central, 'rgb(119, 255, 0)')
     }
-
-    u._action()
   }
 
   check_collision(u) {
-    for (let e_id of this.elements_id) {
+    for (let e_id of Element.elements_id) {
       // todo update block logic
       let e = Element.elements_by_id[e_id]
       if (!e) {
-        this.elements_id.delete(e_id)
+        Element.elements_id.delete(e_id)
         return
       }
 
@@ -288,18 +288,29 @@ export class Game {
   }
 
   render() {
-    for (let e_id of this.elements_id) {
+    for (let e_id of Element.elements_id) {
       let e = Element.elements_by_id[e_id]
       if (!e) {
-        this.elements_id.delete(e_id)
+        Element.elements_id.delete(e_id)
         return
       }
 
       if (this.screen.in_screen(e.x_field_central, e.y_field_central)) {
-        this.game_field.render(e.data_for_render)
+        if (e.type === Element.element_type.missile) {
+          switch (e.animation) {
+            case Missile.animation.none:
+              this.game_field.render(e.data_for_render)
+              break
+            case Missile.animation.spin:
+              this.game_field.render_with_angle(e)
+              break
+          }
+
+        } else {
+          this.game_field.render(e.data_for_render)
+        }
         if (e.type === Element.element_type.unit) {
           let u = e
-
           this.game_field.fill_text(u.player_name, u.x_screen, u.y_screen - 1, '10px Arial')
         }
       }

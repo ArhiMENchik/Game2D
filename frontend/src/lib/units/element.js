@@ -9,8 +9,7 @@ export class Element {
 
   static element_type = {
     unit: 1,
-    tile: 2,
-    dummy: 3,
+    missile: 2,
   }
 
   static set_offset(x, y) {
@@ -20,25 +19,48 @@ export class Element {
 
   static elements_by_id = {}
 
-  constructor(sprite, x_sprite, y_sprite, x_field, y_field, type, width = 32, height = 32) {
+  static get elements_id() {
+    return Object.keys(Element.elements_by_id)
+  }
+
+  constructor(model, x_field, y_field, type, size = 1, speed = 0) {
     this.id = ++Element.id
 
-    this.sprite = sprite
-
-    this.x_sprite = x_sprite
-    this.y_sprite = y_sprite
+    this.model = model
 
     this.x_field = x_field
     this.y_field = y_field
 
-    this.width = width
-    this.height = height
+    this.x_action = this.x_field
+    this.y_action = this.y_field
 
     this.prevent_action = false
 
     this.type = type
 
+    this.size = size
+
+    this.speed = speed
+
     Element.elements_by_id[this.id] = this
+  }
+
+  kwargs(kwargs) {
+    for (let k in kwargs) {
+      if (k in this) {
+        this[k] = kwargs[k]
+      }
+    }
+
+    return this
+  }
+
+  get width() {
+    return this.model.width * this.size
+  }
+
+  get height() {
+    return this.model.height * this.size
   }
 
   get x_field_central() {
@@ -57,10 +79,27 @@ export class Element {
     let x = this.x_field - Element.offset_x
     let y = this.y_field - Element.offset_y
 
-    return [this.sprite.img, this.x_sprite, this.y_sprite, this.width, this.height, x, y, this.width, this.height]
+    return [...this.model.data, x, y, this.width, this.height]
   }
 
   _action() {
+    if (this.speed > 0) {
+      let dist = Common.calc_dist(this.x_field, this.y_field, this.x_action, this.y_action)
+
+      if (dist < this.speed) {
+        this.x_field = this.x_action
+        this.y_field = this.y_action
+
+        this.command = Common.command.stop
+      }
+
+      if (this.x_field !== this.x_action && this.y_field !== this.y_action) {
+        let new_pos = Common.calc_new_pos(this.x_field, this.y_field, this.x_action, this.y_action, this.speed)
+
+        this.x_field += new_pos.new_x
+        this.y_field += new_pos.new_y
+      }
+    }
   }
 
   click_detection(x, y) {
@@ -83,17 +122,9 @@ export class Element {
   get y_screen_central() {
     return this.y_field - Element.offset_y + this.height / 2
   }
-}
 
-export class Tile extends Element {
-  constructor(sprite, x_sprite, y_sprite, x_field, y_filed, is_block = true) {
-    super(sprite, x_sprite, y_sprite, x_field, y_filed, Element.element_type.tile)
-    this.is_block = is_block
-  }
-}
-
-export class Dummy extends Element {
-  constructor(sprite, x_sprite, y_sprite, x_field, y_filed, offset_x, offset_y) {
-    super(sprite, x_sprite, y_sprite, x_field, y_filed, Element.element_type.dummy)
+  destroy() {
+    Element.elements_by_id[this.id] = null
+    delete Element.elements_by_id[this.id]
   }
 }

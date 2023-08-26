@@ -1,3 +1,5 @@
+import {Element} from "@/lib/units/element";
+
 export class Canvas {
   constructor(canvas) {
     this.canvas = canvas
@@ -125,5 +127,17 @@ export class Canvas {
 
   render(data) {
     this.ctx.drawImage(...data)
+  }
+
+  render_with_angle(e) {
+    this.ctx.save()
+
+    this.ctx.translate(e.x_field_central - Element.offset_x, e.y_field_central - Element.offset_y)
+
+    this.ctx.rotate(e.angle * Math.PI / 180)
+
+    this.ctx.drawImage(...e.model.data, -e.width / 2, -e.height / 2, e.width, e.height)
+
+    this.ctx.restore()
   }
 }
