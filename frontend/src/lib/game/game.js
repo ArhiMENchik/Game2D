@@ -1,6 +1,6 @@
 import {Element} from "@/lib/units/element";
 import {Screen} from "@/lib/field/screen";
-import {Model, Sprite} from "@/lib/sprite";
+import {Sprite} from "@/lib/models/sprite";
 import src from "@/assets/image/game/game_full_sprites.png";
 import {Unit} from "@/lib/units/unit";
 import {FullField} from "@/lib/field/full_field";
@@ -13,6 +13,7 @@ import {Minimap} from "@/lib/game/minimap";
 import {Panel} from "@/lib/game/panel";
 import {Player} from "@/lib/player";
 import {Missile} from "@/lib/units/missile";
+import {Model} from "@/lib/models/model";
 
 export class Game {
   constructor(game_field, minimap, game_panel, player) {

@@ -6,6 +6,11 @@ export default class Common {
     attack: 3
   }
 
+  static orientation = {
+    vertical: 1,
+    horizontal: 2
+  }
+
   static get_random_int(min, max) {
     min = Math.floor(min)
     max = Math.ceil(max)
