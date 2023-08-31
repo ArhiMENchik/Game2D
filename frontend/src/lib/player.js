@@ -1,3 +1,5 @@
+import Common from "@/lib/common";
+
 export class Player {
   static id = 0
 
@@ -11,6 +13,8 @@ export class Player {
     this.id = ++Player.id
 
     this.name = name === '' ? `Player ${this.id}` : name
+
+    this.color = Common.generate_color()
 
     Player.player_by_id[this.id] = this
   }

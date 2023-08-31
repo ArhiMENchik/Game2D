@@ -174,11 +174,25 @@ export class Unit extends Element {
   }
 
   set target(value) {
+    if (value === this) return
+
     this._target = value
+
     if (value) {
       this.command = Common.command.attack
     } else {
       this.command = Common.command.stop
     }
+  }
+
+  get color() {
+    let color = null
+
+    let player = Player.player_by_id[this.player_id]
+    if (player) {
+      color = player.color
+    }
+
+    return color
   }
 }

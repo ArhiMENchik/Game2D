@@ -51,6 +51,17 @@ export default class Common {
       array.splice(indexToDelete, 1)
     }
   }
+
+  static generate_color() {
+    let letters = '0123456789abcdef'
+    let color = '#'
+
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)]
+    }
+
+    return color
+  }
 }
 
 Array.prototype.delete = function (elem) {

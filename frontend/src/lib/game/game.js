@@ -311,8 +311,18 @@ export class Game {
           this.game_field.render(e.data_for_render)
         }
         if (e.type === Element.element_type.unit) {
-          let u = e
-          this.game_field.fill_text(u.player_name, u.x_screen, u.y_screen - 1, '10px Arial')
+
+          let offset = e.hp < e.max_hp ? 15 : 5
+
+          if (e.hp < e.max_hp) {
+            let x = e.x_screen
+            let y = e.y_screen - e.height - 10
+
+            this.game_field.draw_line(x, y + e.height + 5, x + e.width, y + e.height + 5, 'rgba(255, 255, 255, .9)', 3)
+            this.game_field.draw_line(x, y + e.height + 5, x + e.width * e.hp_percent, y + e.height + 5, e.color, 3)
+          }
+
+          this.game_field.fill_text(e.player_name, e.x_screen, e.y_screen - offset, '10px Arial')
         }
       }
     }
