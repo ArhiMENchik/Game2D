@@ -45,7 +45,7 @@ export class SelectGroup {
     return this._units_id
   }
 
-  set units_id(value) {
+  set units(value) {
     if (this._units_id.length > 0) {
       this.reset()
     }

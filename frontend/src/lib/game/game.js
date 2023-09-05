@@ -208,7 +208,7 @@ export class Game {
               this.select_group.add(u)
             }
           } else {
-            this.select_group.units_id = [u]
+            this.select_group.units = [u]
           }
           break
         }
@@ -219,11 +219,11 @@ export class Game {
   control_groups_logic(event) {
     if (event.keyCode >= 49 && event.keyCode <= 57) {
       if (event.ctrlKey) {
-        this.control_groups.add(event.keyCode, this.select_group.units_id)
+        this.control_groups.add(event.keyCode, this.select_group.units_id.clone())
       } else {
         let control_group = this.control_groups.get_group(event.keyCode)
         if (control_group) {
-          this.select_group.units_id = control_group.units_id
+          this.select_group.units = control_group.units
         }
       }
     }

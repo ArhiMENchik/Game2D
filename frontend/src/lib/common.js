@@ -3,7 +3,9 @@ export default class Common {
   static command = {
     stop: 1,
     move: 2,
-    attack: 3
+    attack: 3,
+    move_attack: 4,
+    cast: 5,
   }
 
   static orientation = {
@@ -69,4 +71,8 @@ Array.prototype.delete = function (elem) {
   if (indexToDelete !== -1) {
     this.splice(indexToDelete, 1)
   }
+}
+
+Array.prototype.clone = function () {
+  return this.slice(0)
 }
