@@ -55,10 +55,10 @@ export class Minimap {
     y = y * this.scale_y
 
     for (let u_id of this.select_group.units_id) {
-      let u = Element.elements_by_id[u_id]
+      let u = Element.get_element(u_id)
       if (!u) {
         this.select_group.units_id.delete(u_id)
-        return
+        continue
       }
       u.set_new_pos(x, y)
     }

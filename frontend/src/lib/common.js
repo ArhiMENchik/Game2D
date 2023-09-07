@@ -70,9 +70,50 @@ Array.prototype.delete = function (elem) {
   let indexToDelete = this.findIndex(f_e => f_e === elem)
   if (indexToDelete !== -1) {
     this.splice(indexToDelete, 1)
+    return true
   }
+  return false
 }
 
 Array.prototype.clone = function () {
   return this.slice(0)
+}
+
+Array.prototype.has = function (elem) {
+  return this.filter(f_e => f_e === elem).length > 0
+}
+
+Array.prototype.not = function (elem) {
+  return this.filter(f_e => f_e === elem).length === 0
+}
+
+Array.prototype.clear = function () {
+  return this.splice(0, this.length)
+}
+
+Array.prototype.get = function (elem) {
+  let result = this.filter(f_e => f_e === elem)
+  if (result.length > 0) {
+    return result
+  }
+  return null
+}
+
+Array.prototype.next = function (elem) {
+  let index = this.findIndex(f_e => f_e === elem)
+  if (index !== -1) {
+    return index + 1 === this.length ? this[0] : this[++index]
+  }
+
+  console.error(`Element "${elem}" not found`)
+  return null
+}
+
+Array.prototype.add_unique = function (elem) {
+  if (this.filter(f_e => f_e === elem).length === 0) {
+    this.push(elem)
+    return true
+  } else {
+    return false
+  }
 }

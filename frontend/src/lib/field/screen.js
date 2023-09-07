@@ -43,7 +43,7 @@ export class Screen {
     this.set_element_offset()
   }
 
-  pos_in_world(x, y) {
+  pos_in_field(x, y) {
     return {x: x + this.x_start, y: y + this.y_start}
   }
 

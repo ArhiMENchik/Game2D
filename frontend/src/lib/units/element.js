@@ -23,6 +23,17 @@ export class Element {
     return Object.keys(Element.elements_by_id)
   }
 
+  static get_element(id) {
+    let e = Element.elements_by_id[id]
+
+    if (!e) {
+      Element.elements_id.delete(id)
+      return null
+    }
+
+    return e
+  }
+
   constructor(model, x_field, y_field, type, size = 1, speed = 0) {
     this.id = ++Element.id
 
@@ -41,6 +52,9 @@ export class Element {
     this.size = size
 
     this.speed = speed
+
+    this.x_panel = 0
+    this.y_panel = 0
 
     Element.elements_by_id[this.id] = this
   }
@@ -102,9 +116,16 @@ export class Element {
     }
   }
 
+  // todo add mouse move event logic
+
   click_detection(x, y) {
     return ((this.x_field <= x && this.x_field + this.width >= x) &&
       (this.y_field <= y && this.y_field + this.height >= y))
+  }
+
+  on_panel_click_detection(x, y) {
+    return ((this.x_panel <= x && this.x_panel + this.width >= x) &&
+      (this.y_panel <= y && this.y_panel + this.height >= y))
   }
 
   get x_screen() {

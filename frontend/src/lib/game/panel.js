@@ -7,16 +7,35 @@ export class Panel {
     this._sprite_map = null
 
     this.select_group = select_group
-    this.select_group.on_change(this.select_group_logic.bind(this))
 
     this.unit_info = {
       width: 200,
       height: 320
     }
+
+    this.canvas.mouseup((event) => {
+      if (event.button === 0) {
+        let rect = this.canvas.canvas.getBoundingClientRect()
+        let x = event.clientX - rect.left
+        let y = event.clientY - rect.top
+
+        this.click_logic(x, y)
+      }
+    })
   }
 
-  select_group_logic() {
+  click_logic(x, y) {
+    for (let u_id of this.select_group.units_id) {
+      let u = Element.get_element(u_id)
+      if (!u) {
+        this.select_group.units_id.delete(u_id)
+        continue
+      }
 
+      if (u.on_panel_click_detection(x, y)) {
+        this.select_group.select_unit_id = u.id
+      }
+    }
   }
 
   get sprite_map() {
@@ -37,10 +56,10 @@ export class Panel {
     this.canvas.draw_line(0, 100, this.unit_info.width, 100, 'rgb(0, 255, 0)')
 
     for (let u_id of this.select_group.units_id) {
-      let u = Element.elements_by_id[u_id]
+      let u = Element.get_element(u_id)
       if (!u) {
         this.select_group.units_id.delete(u_id)
-        return
+        continue
       }
 
       if (x_offset > Math.floor((this.canvas.width - this.unit_info.width + 5) / 64)) {
@@ -51,12 +70,12 @@ export class Panel {
       let x = x_offset++ * 64 + this.unit_info.width + 5
       let y = y_offset * 64
 
-      if (u.is_select) {
-        let x = 50
-        let y = 0
+      if (u.id === this.select_group.select_unit_id) {
+        let x_select = 50
+        let y_select = 0
         let size_x = u.width * 3 <= 96 ? u.width * 3 : 96
         let size_y = u.height * 3 <= 128 ? u.height * 3 : 128
-        let data = [...u.model.data, x, y, size_x, size_y]
+        let data = [...u.model.data, x_select, y_select, size_x, size_y]
 
         this.canvas.render(data)
 
@@ -68,13 +87,22 @@ export class Panel {
           this.canvas.render([this.sprite_map.img, 12 * 32, 27 * 32, 32, 32, 40, 105, 32, 32])
           this.canvas.render([this.sprite_map.img, 14 * 32, 27 * 32, 32, 32, 75, 105, 32, 32])
         }
+
+        this.canvas.draw_rect_glow(x, y, u.width, u.height, 1, 'orange', 'orange')
       }
+
+      u.x_panel = x
+      u.y_panel = y
+
+      let data = [...u.model.data, x, y, u.width, u.height]
 
       this.canvas.draw_line(x, y + u.height + 5, x + u.width, y + u.height + 5, 'rgba(255, 255, 255, .9)', 5)
       this.canvas.draw_line(x, y + u.height + 5, x + u.width * u.hp_percent, y + u.height + 5, u.hp_color, 5)
 
       this.canvas.draw_line(x, y + u.height + 11, x + u.width, y + u.height + 11, 'rgba(255, 255, 255, .9)', 5)
       this.canvas.draw_line(x, y + u.height + 11, x + u.width * u.mp_percent, y + u.height + 11, 'rgb(0, 0, 255)', 5)
+
+      this.canvas.render(data)
     }
   }
 }

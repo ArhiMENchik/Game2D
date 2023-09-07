@@ -28,10 +28,8 @@ class ControlGroup {
     let units = []
 
     for (let u_id of this.units_id) {
-      let u = Element.elements_by_id[u_id]
-      if (!u) {
-        Element.elements_id.delete(u_id)
-      } else {
+      let u = Element.get_element(u_id)
+      if (u) {
         units.push(u)
       }
     }

@@ -2,43 +2,77 @@ import {Element} from '@/lib/units/element';
 
 export class SelectGroup {
   constructor(player_id) {
-    this._units_id = []
+    this.__units_id = []
+
     this.player_id = player_id
+
+    this.select_unit_id = 0
+    this.select_unit_type = null
+
+    let self = this
+    this._units_id = new Proxy(self.__units_id, {
+      set(target, p, newValue, receiver) {
+        Reflect.set(target, p, newValue, receiver)
+
+        if (target.length > 0) {
+          let u = Element.get_element(target[0])
+          if (!u) {
+            target.delete(target[0])
+            return
+          }
+
+          self.select_unit_id = target[0]
+        }
+
+        return true
+      }
+    })
+  }
+
+  set_select_unit(u_id) {
+    if (this.units_id.length === 0) return
+    if (this.select_unit_id === u_id) return
+    if (this.units_id) return
+  }
+
+  set_next_select_unit() {
+    if (this.units_id.length < 2) return
+
+    let next = this.units_id.next(this.select_unit_id)
+    if (next) {
+      this.select_unit_id = next
+    }
   }
 
   add(u) {
     // if (u.is_enemy_for_player(this.player.id)) return
 
-    if (this._units_id.filter(u_id => u_id === u.id).length === 0) {
-      this._units_id.push(u.id)
+    if (this.units_id.not(u.id)) {
+      this.units_id.push(u.id)
       u.is_picked = true
-      u.is_select = true
     }
   }
 
   remove(u) {
-    let indexToDelete = this._units_id.findIndex(u_id => u_id === u.id)
-
-    if (indexToDelete !== -1) {
-      this._units_id.splice(indexToDelete, 1)
+    if (this.units_id.delete(u.id)) {
       u.is_picked = false
-      u.is_select = false
+      u.x_panel = 0
+      u.y_panel = 0
     }
   }
 
   reset() {
-    for (let u_id of this._units_id) {
-      let u = Element.elements_by_id[u_id]
+    for (let u_id of this.units_id) {
+      let u = Element.get_element(u_id)
       if (!u) {
         this.units_id.delete(u_id)
-        return
+        continue
       }
 
       u.is_picked = false
-      u.is_select = false
     }
 
-    this._units_id.splice(0, this._units_id.length)
+    this.units_id.clear()
   }
 
   get units_id() {
@@ -46,7 +80,7 @@ export class SelectGroup {
   }
 
   set units(value) {
-    if (this._units_id.length > 0) {
+    if (this.units_id.length > 0) {
       this.reset()
     }
 
@@ -60,10 +94,6 @@ export class SelectGroup {
   }
 
   get is_empty() {
-    return this._units_id.length === 0
-  }
-
-  on_change(func) {
-    this.callback = func
+    return this.units_id.length === 0
   }
 }

@@ -90,11 +90,16 @@ export class Game {
       this.selection_area.reset_pos()
     })
 
-    document.addEventListener('keyup', () => {
+    document.addEventListener('keyup', (event) => {
+      if (event.keyCode !== 123 && event.keyCode !== 116) {
+        event.preventDefault()
+      }
+
+      this.tab_logic(event)
     })
 
     document.addEventListener('keydown', (event) => {
-      if (event.ctrlKey || event.altKey) {
+      if (event.keyCode !== 123 && event.keyCode !== 116) {
         event.preventDefault()
       }
 
@@ -117,7 +122,7 @@ export class Game {
       let x_screen = Math.floor(Math.random() * (i * 32 - i * 16 + 1)) + i * 16
       let y_screen = Math.floor(Math.random() * (i * 32 - i * 16 + 1)) + i * 16
 
-      let pos_field = this.screen.pos_in_world(x_screen, y_screen)
+      let pos_field = this.screen.pos_in_field(x_screen, y_screen)
 
       let unit_model = new Model(this.sprites, x_sprite, y_sprite)
       let missile_model = new MissileModel(this.sprites, 41 * 32, 25 * 32, 6)
@@ -134,12 +139,10 @@ export class Game {
 
     this.minimap.screen_logic()
 
-
     for (let e_id of Element.elements_id) {
-      let e = Element.elements_by_id[e_id]
+      let e = Element.get_element(e_id)
       if (!e) {
-        Element.elements_id.delete(e_id)
-        return
+        continue
       }
 
       if (e.type === Element.element_type.unit) {
@@ -157,15 +160,14 @@ export class Game {
   }
 
   action_logic(x, y) {
-    let pos_field = this.screen.pos_in_world(x, y)
+    let pos_field = this.screen.pos_in_field(x, y)
 
     let target = null
 
     for (let e_id of Element.elements_id) {
-      let e = Element.elements_by_id[e_id]
+      let e = Element.get_element(e_id)
       if (!e) {
-        Element.elements_id.delete(e_id)
-        return
+        continue
       }
 
       if (e.type === Element.element_type.unit) {
@@ -179,10 +181,10 @@ export class Game {
     }
 
     for (let u_id of this.select_group.units_id) {
-      let u = Element.elements_by_id[u_id]
+      let u = Element.get_element(u_id)
       if (!u) {
         this.select_group.units_id.delete(u_id)
-        return
+        continue
       }
 
       target ? u.target = target : u.set_new_pos(pos_field.x, pos_field.y)
@@ -191,16 +193,15 @@ export class Game {
 
   click_logic(x, y, shift_key) {
     for (let e_id of Element.elements_id) {
-      let e = Element.elements_by_id[e_id]
+      let e = Element.get_element(e_id)
       if (!e) {
-        Element.elements_id.delete(e_id)
-        return
+        continue
       }
 
       if (e.type === Element.element_type.unit) {
         let u = e
 
-        let pos_field = this.screen.pos_in_world(x, y)
+        let pos_field = this.screen.pos_in_field(x, y)
         if (u.click_detection(pos_field.x, pos_field.y)) {
           if (shift_key) {
             if (u.is_picked) {
@@ -245,6 +246,12 @@ export class Game {
     }
   }
 
+  tab_logic(event) {
+    if (event.keyCode === 9) {
+      this.select_group.set_next_select_unit()
+    }
+  }
+
   unit_logic(u) {
     this.check_collision(u)
 
@@ -263,15 +270,14 @@ export class Game {
   check_collision(u) {
     for (let e_id of Element.elements_id) {
       // todo update block logic
-      let e = Element.elements_by_id[e_id]
+      let e = Element.get_element(e_id)
       if (!e) {
-        Element.elements_id.delete(e_id)
-        return
+        continue
       }
 
       if (e.type === Element.element_type.dummy || e.type === Element.element_type.tile) {
         let potential_pos = u.potential_action()
-        let pos_field = this.screen.pos_in_world(potential_pos.x_p, potential_pos.y_p)
+        let pos_field = this.screen.pos_in_field(potential_pos.x_p, potential_pos.y_p)
         let collision = Common.check_collision(pos_field.x - 16, pos_field.y - 16, e.x_field, e.y_field,
           u.width, u.height, e.width, e.height)
         if (collision) {
@@ -291,10 +297,9 @@ export class Game {
 
   render() {
     for (let e_id of Element.elements_id) {
-      let e = Element.elements_by_id[e_id]
+      let e = Element.get_element(e_id)
       if (!e) {
-        Element.elements_id.delete(e_id)
-        return
+        continue
       }
 
       if (this.screen.in_screen(e.x_field_central, e.y_field_central)) {

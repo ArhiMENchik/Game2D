@@ -20,8 +20,8 @@ export class Missile extends Element {
   }
 
   _action() {
-    let owner = Element.elements_by_id[this.owner_id]
-    let target = Element.elements_by_id[this.target_id]
+    let owner = Element.get_element(this.owner_id)
+    let target = Element.get_element(this.target_id)
 
     if (!owner) {
       this.destroy()
