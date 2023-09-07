@@ -145,7 +145,7 @@ export class Unit extends Element {
 
   create_missile() {
     let missile = new Missile(this.id, this.target.id, this.missile_model,
-      this.x_field_central, this.y_field_central, 0.5, 4, Missile.animation.spin)
+      this.x_field_central, this.y_field_central, 1)
   }
 
   take_damage(damage) {

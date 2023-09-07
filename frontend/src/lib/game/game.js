@@ -12,8 +12,7 @@ import Common from "@/lib/common";
 import {Minimap} from "@/lib/game/minimap";
 import {Panel} from "@/lib/game/panel";
 import {Player} from "@/lib/player";
-import {Missile} from "@/lib/units/missile";
-import {Model} from "@/lib/models/model";
+import {MissileModel, Model} from "@/lib/models/model";
 
 export class Game {
   constructor(game_field, minimap, game_panel, player) {
@@ -38,6 +37,8 @@ export class Game {
   }
 
   init() {
+    this.game_panel.sprite_map = this.sprites
+
     this.create_player()
 
     this.create_start_units()
@@ -119,7 +120,7 @@ export class Game {
       let pos_field = this.screen.pos_in_world(x_screen, y_screen)
 
       let unit_model = new Model(this.sprites, x_sprite, y_sprite)
-      let missile_model = new Model(this.sprites, 45 * 32, 25 * 32)
+      let missile_model = new MissileModel(this.sprites, 41 * 32, 25 * 32, 6)
 
       let unit = new Unit(Common.get_random_int(1, Player.player_count), unit_model, pos_field.x, pos_field.y)
         .kwargs({missile_model: missile_model})
@@ -297,19 +298,8 @@ export class Game {
       }
 
       if (this.screen.in_screen(e.x_field_central, e.y_field_central)) {
-        if (e.type === Element.element_type.missile) {
-          switch (e.animation) {
-            case Missile.animation.none:
-              this.game_field.render(e.data_for_render)
-              break
-            case Missile.animation.spin:
-              this.game_field.render_with_angle(e)
-              break
-          }
+        this.game_field.render(e.data_for_render)
 
-        } else {
-          this.game_field.render(e.data_for_render)
-        }
         if (e.type === Element.element_type.unit) {
 
           let offset = e.hp < e.max_hp ? 15 : 5

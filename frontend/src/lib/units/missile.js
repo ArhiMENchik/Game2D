@@ -7,7 +7,8 @@ export class Missile extends Element {
     spin: 1,
   }
 
-  constructor(owner_id, target_id, model, x_field, y_field, size = 1, speed = 4, animation = Missile.animation.none) {
+  constructor(owner_id, target_id, model, x_field, y_field, size = 1, speed = 4, damage_func = () => {
+  }) {
     super(model, x_field, y_field, Element.element_type.missile, size, speed)
     this.owner_id = owner_id
     this.target_id = target_id
@@ -15,8 +16,7 @@ export class Missile extends Element {
     this.last_pos_x = null
     this.last_pos_y = null
 
-    this.animation = animation
-    this.angle = 0
+    this.damage_func = damage_func
   }
 
   _action() {
@@ -53,21 +53,9 @@ export class Missile extends Element {
       this.destroy()
     }
 
-    this.animate()
-
     this.x_action = x
     this.y_action = y
 
     super._action()
-  }
-
-  animate() {
-    switch (this.animation) {
-      case Missile.animation.none:
-        break
-      case Missile.animation.spin:
-        this.angle + 36 > 360 ? this.angle = 36 : this.angle += 36
-        break
-    }
   }
 }

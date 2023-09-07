@@ -4,6 +4,7 @@ import {Element} from "@/lib/units/element";
 export class Panel {
   constructor(canvas, select_group) {
     this.canvas = new Canvas(canvas)
+    this._sprite_map = null
 
     this.select_group = select_group
     this.select_group.on_change(this.select_group_logic.bind(this))
@@ -16,6 +17,14 @@ export class Panel {
 
   select_group_logic() {
 
+  }
+
+  get sprite_map() {
+    return this._sprite_map
+  }
+
+  set sprite_map(value) {
+    this._sprite_map = value
   }
 
   draw_panel() {
@@ -53,17 +62,19 @@ export class Panel {
 
         this.canvas.fill_text(`${u.hp}|${u.max_hp}`, 150, 20, '15px Arial', 'rgb(0, 255, 0)')
         this.canvas.fill_text(`${u.mp}|${u.max_mp}`, 150, 40, '15px Arial', 'rgb(0, 0, 255)')
-      }
 
-      let data = [...u.model.data, x, y, u.width, u.height]
+        if (this.sprite_map) {
+          this.canvas.render([this.sprite_map.img, 13 * 32, 27 * 32, 32, 32, 5, 105, 32, 32])
+          this.canvas.render([this.sprite_map.img, 12 * 32, 27 * 32, 32, 32, 40, 105, 32, 32])
+          this.canvas.render([this.sprite_map.img, 14 * 32, 27 * 32, 32, 32, 75, 105, 32, 32])
+        }
+      }
 
       this.canvas.draw_line(x, y + u.height + 5, x + u.width, y + u.height + 5, 'rgba(255, 255, 255, .9)', 5)
       this.canvas.draw_line(x, y + u.height + 5, x + u.width * u.hp_percent, y + u.height + 5, u.hp_color, 5)
 
       this.canvas.draw_line(x, y + u.height + 11, x + u.width, y + u.height + 11, 'rgba(255, 255, 255, .9)', 5)
       this.canvas.draw_line(x, y + u.height + 11, x + u.width * u.mp_percent, y + u.height + 11, 'rgb(0, 0, 255)', 5)
-
-      this.canvas.render(data)
     }
   }
 }
