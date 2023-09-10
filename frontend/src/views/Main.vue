@@ -8,6 +8,11 @@
       </div>
       <div class="item">Загрузить игру</div>
       <div class="item">Настройки</div>
+      <div class="item">
+        <router-link class="clear-link" :to="{name: 'model_editor'}">
+          Редактор моделей
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
