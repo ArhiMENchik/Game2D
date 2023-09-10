@@ -111,9 +111,6 @@ export class Unit extends Element {
       this.x_action = this.target.x_field
       this.y_action = this.target.y_field
 
-    } else if (this.command === Common.command.attack_move) {
-
-
     }
 
     super._action()
