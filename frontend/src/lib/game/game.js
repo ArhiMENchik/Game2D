@@ -212,7 +212,6 @@ export class Game {
           } else {
             this.select_group.units = [u]
           }
-          break
         }
       }
     }

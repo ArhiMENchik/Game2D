@@ -95,7 +95,7 @@ export class Minimap {
     let width = u.width / this.scale_x
     let height = u.height / this.scale_y
 
-    this.canvas.ctx.fillStyle = 'rgb(0, 255, 0)'
+    this.canvas.ctx.fillStyle = u.color
     this.canvas.ctx.fillRect(x, y, width, height)
   }
 }

@@ -5,8 +5,8 @@ import {Missile} from "@/lib/units/missile";
 
 export class Unit extends Element {
   constructor(player_id, model, x_field, y_field, size = 1,
-              max_hp = 10, max_mp = 10, speed = 2,
-              damage = 2, attack_speed = 1000, attack_range = 128, missile_model) {
+              max_hp = 650, max_mp = 100, speed = 2,
+              damage = 15, attack_speed = 1000, attack_range = 128, missile_model) {
     super(model, x_field, y_field, Element.element_type.unit, size, speed)
     this.player_id = player_id
 
@@ -92,6 +92,9 @@ export class Unit extends Element {
       this.x_action = this.target.x_field
       this.y_action = this.target.y_field
 
+    } else if (this.command === Common.command.attack_move) {
+
+
     }
 
     super._action()
@@ -145,7 +148,7 @@ export class Unit extends Element {
 
   create_missile() {
     let missile = new Missile(this.id, this.target.id, this.missile_model,
-      this.x_field_central, this.y_field_central, 1)
+      this.x_field, this.y_field, 1, 4, this.damage)
   }
 
   take_damage(damage) {

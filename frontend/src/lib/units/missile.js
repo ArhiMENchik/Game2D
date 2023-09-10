@@ -7,8 +7,7 @@ export class Missile extends Element {
     spin: 1,
   }
 
-  constructor(owner_id, target_id, model, x_field, y_field, size = 1, speed = 4, damage_func = () => {
-  }) {
+  constructor(owner_id, target_id, model, x_field, y_field, size = 1, speed = 4, damage) {
     super(model, x_field, y_field, Element.element_type.missile, size, speed)
     this.owner_id = owner_id
     this.target_id = target_id
@@ -16,7 +15,7 @@ export class Missile extends Element {
     this.last_pos_x = null
     this.last_pos_y = null
 
-    this.damage_func = damage_func
+    this.damage = damage
   }
 
   _action() {
@@ -49,7 +48,7 @@ export class Missile extends Element {
     let distance = Common.calc_dist(this.x_field, this.y_field, x, y)
 
     if (distance < this.speed) {
-      if (target) target.take_damage(owner.damage)
+      if (target) target.take_damage(this.damage)
       this.destroy()
     }
 

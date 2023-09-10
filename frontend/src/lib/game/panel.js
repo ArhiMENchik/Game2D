@@ -71,7 +71,7 @@ export class Panel {
       let y = y_offset * 64
 
       if (u.id === this.select_group.select_unit_id) {
-        let x_select = 50
+        let x_select = 0
         let y_select = 0
         let size_x = u.width * 3 <= 96 ? u.width * 3 : 96
         let size_y = u.height * 3 <= 128 ? u.height * 3 : 128
@@ -79,8 +79,8 @@ export class Panel {
 
         this.canvas.render(data)
 
-        this.canvas.fill_text(`${u.hp}|${u.max_hp}`, 150, 20, '15px Arial', 'rgb(0, 255, 0)')
-        this.canvas.fill_text(`${u.mp}|${u.max_mp}`, 150, 40, '15px Arial', 'rgb(0, 0, 255)')
+        this.canvas.fill_text(`${u.hp}|${u.max_hp}`, 100, 20, '15px Arial', 'rgb(0, 255, 0)')
+        this.canvas.fill_text(`${u.mp}|${u.max_mp}`, 100, 40, '15px Arial', 'rgb(0, 0, 255)')
 
         if (this.sprite_map) {
           this.canvas.render([this.sprite_map.img, 13 * 32, 27 * 32, 32, 32, 5, 105, 32, 32])
