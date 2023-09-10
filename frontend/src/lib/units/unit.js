@@ -28,6 +28,24 @@ export class Unit extends Element {
     this.command = Common.command.stop
 
     this._target = null
+
+    this._death_callback = () => {
+    }
+
+    this._attacked_callback = () => {
+    }
+
+    this._attacking_callback = () => {
+    }
+
+    this._start_casting_callback = () => {
+    }
+
+    this._stop_casting_callback = () => {
+    }
+
+    this._finish_casting_callback = () => {
+    }
   }
 
   get is_range() {
@@ -74,6 +92,7 @@ export class Unit extends Element {
 
         if ((new Date() - this.last_attack) >= this.attack_speed) {
           if (this.is_range) {
+            this._attacking_callback()
             this.create_missile()
           } else {
             this.target.take_damage(this.damage)
@@ -152,6 +171,7 @@ export class Unit extends Element {
   }
 
   take_damage(damage) {
+    this._attacked_callback()
     this.hp -= damage
     if (this.is_died) {
       this.kill()
@@ -163,6 +183,7 @@ export class Unit extends Element {
   }
 
   kill() {
+    this._death_callback()
     this.destroy()
   }
 
@@ -197,5 +218,29 @@ export class Unit extends Element {
     }
 
     return color
+  }
+
+  death(func) {
+    this._death_callback = func
+  }
+
+  attacked(func) {
+    this._attacked_callback = func
+  }
+
+  attacking(func) {
+    this._attacking_callback = func
+  }
+
+  start_casting(func) {
+    this._start_casting_callback = func
+  }
+
+  stop_casting(func) {
+    this._stop_casting_callback = func
+  }
+
+  finish_casting(func) {
+    this._finish_casting_callback = func
   }
 }
