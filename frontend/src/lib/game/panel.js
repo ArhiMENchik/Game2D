@@ -82,11 +82,7 @@ export class Panel {
         this.canvas.fill_text(`${u.hp}|${u.max_hp}`, 100, 20, '15px Arial', 'rgb(0, 255, 0)')
         this.canvas.fill_text(`${u.mp}|${u.max_mp}`, 100, 40, '15px Arial', 'rgb(0, 0, 255)')
 
-        if (this.sprite_map) {
-          this.canvas.render([this.sprite_map.img, 13 * 32, 27 * 32, 32, 32, 5, 105, 32, 32])
-          this.canvas.render([this.sprite_map.img, 12 * 32, 27 * 32, 32, 32, 40, 105, 32, 32])
-          this.canvas.render([this.sprite_map.img, 14 * 32, 27 * 32, 32, 32, 75, 105, 32, 32])
-        }
+
 
         this.canvas.draw_rect_glow(x, y, u.width, u.height, 1, 'orange', 'orange')
       }

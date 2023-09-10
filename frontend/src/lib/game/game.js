@@ -173,7 +173,7 @@ export class Game {
       if (e.type === Element.element_type.unit) {
         let u = e
 
-        if (u.click_detection(pos_field.x, pos_field.y) && u.is_enemy_for_player(this.main_player.id)) {
+        if (u.click_detection(pos_field.x, pos_field.y)) {
           target = u
           break
         }
@@ -187,7 +187,12 @@ export class Game {
         continue
       }
 
-      target ? u.target = target : u.set_new_pos(pos_field.x, pos_field.y)
+      if (target && target.is_enemy_for_player(u.player_id)) {
+        u.target = target
+        continue
+      }
+
+      u.set_new_pos(pos_field.x, pos_field.y)
     }
   }
 

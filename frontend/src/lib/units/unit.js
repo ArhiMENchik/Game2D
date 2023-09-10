@@ -81,6 +81,9 @@ export class Unit extends Element {
         this.stop()
       }
 
+      this.x_action = this.target.x_field
+      this.y_action = this.target.y_field
+
       let distance = Common.calc_dist(this.x_field_central, this.y_field_central,
         this.target.x_field_central, this.target.y_field_central)
 
@@ -107,10 +110,6 @@ export class Unit extends Element {
 
         return
       }
-
-      this.x_action = this.target.x_field
-      this.y_action = this.target.y_field
-
     }
 
     super._action()
