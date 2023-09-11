@@ -1,4 +1,4 @@
-import Common from "@/lib/game_logic/common";
+import Common from "@/lib/common";
 import {Player} from "@/lib/game_logic/player";
 
 export class Element {

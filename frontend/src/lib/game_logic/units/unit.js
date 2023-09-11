@@ -1,4 +1,4 @@
-import Common from "@/lib/game_logic/common";
+import Common from "@/lib/common";
 import {Player} from "@/lib/game_logic/player";
 import {Element} from "@/lib/game_logic/units/element";
 import {Missile} from "@/lib/game_logic/units/missile";

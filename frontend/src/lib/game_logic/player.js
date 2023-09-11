@@ -1,4 +1,4 @@
-import Common from "@/lib/game_logic/common";
+import Common from "@/lib/common";
 
 export class Player {
   static id = 0

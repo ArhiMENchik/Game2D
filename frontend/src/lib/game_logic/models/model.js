@@ -1,4 +1,4 @@
-import Common from "@/lib/game_logic/common";
+import Common from "@/lib/common";
 
 export class Model {
   constructor(sprite_map, x, y, width = 32, height = 32) {

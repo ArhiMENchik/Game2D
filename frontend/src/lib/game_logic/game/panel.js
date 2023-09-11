@@ -1,4 +1,4 @@
-import {Canvas} from "@/lib/game_logic/canvas";
+import {Canvas} from "@/lib/canvas";
 import {Element} from "@/lib/game_logic/units/element";
 
 export class Panel {
