@@ -1,18 +1,18 @@
-import {Element} from "@/lib/units/element";
-import {Screen} from "@/lib/field/screen";
-import {Sprite} from "@/lib/models/sprite";
+import {Element} from "@/lib/game_logic/units/element";
+import {Screen} from "@/lib/game_logic/field/screen";
+import {Sprite} from "@/lib/game_logic/models/sprite";
 import src from "@/assets/image/game/game_full_sprites.png";
-import {Unit} from "@/lib/units/unit";
-import {FullField} from "@/lib/field/full_field";
-import {Canvas} from "@/lib/canvas";
-import {SelectionArea} from "@/lib/selection_area";
-import {SelectGroup} from "@/lib/units/select_group";
-import {ControlGroups} from "@/lib/units/control_group";
-import Common from "@/lib/common";
-import {Minimap} from "@/lib/game/minimap";
-import {Panel} from "@/lib/game/panel";
-import {Player} from "@/lib/player";
-import {MissileModel, Model} from "@/lib/models/model";
+import {Unit} from "@/lib/game_logic/units/unit";
+import {FullField} from "@/lib/game_logic/field/full_field";
+import {Canvas} from "@/lib/game_logic/canvas";
+import {SelectionArea} from "@/lib/game_logic/selection_area";
+import {SelectGroup} from "@/lib/game_logic/units/select_group";
+import {ControlGroups} from "@/lib/game_logic/units/control_group";
+import Common from "@/lib/game_logic/common";
+import {Minimap} from "@/lib/game_logic/game/minimap";
+import {Panel} from "@/lib/game_logic/game/panel";
+import {Player} from "@/lib/game_logic/player";
+import {MissileModel, Model} from "@/lib/game_logic/models/model";
 
 export class Game {
   constructor(game_field, minimap, game_panel, player) {

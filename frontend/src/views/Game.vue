@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import {Game} from "@/lib/game/game";
-import {Player} from "@/lib/player";
+import {Game} from "@/lib/game_logic/game/game";
+import {Player} from "@/lib/game_logic/player";
 
 export default {
   name: "Game",
@@ -25,9 +25,7 @@ export default {
     let game_panel = document.getElementById('game-panel')
 
     this.game = new Game(game_field, minimap, game_panel, new Player())
-  },
-  methods() {
-  },
+  }
 }
 </script>
 

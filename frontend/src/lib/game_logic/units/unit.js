@@ -1,7 +1,7 @@
-import Common from "@/lib/common";
-import {Player} from "@/lib/player";
-import {Element} from "@/lib/units/element";
-import {Missile} from "@/lib/units/missile";
+import Common from "@/lib/game_logic/common";
+import {Player} from "@/lib/game_logic/player";
+import {Element} from "@/lib/game_logic/units/element";
+import {Missile} from "@/lib/game_logic/units/missile";
 
 export class Unit extends Element {
   constructor(player_id, model, x_field, y_field, size = 1,

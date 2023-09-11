@@ -1,5 +1,5 @@
-import Common from "@/lib/common";
-import {Player} from "@/lib/player";
+import Common from "@/lib/game_logic/common";
+import {Player} from "@/lib/game_logic/player";
 
 export class Element {
   static id = 0

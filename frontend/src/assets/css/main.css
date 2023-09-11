@@ -56,4 +56,15 @@
   border-left: none;
 }
 
+.model-editor {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.model-editor .model-editor-wrapper .model-editor-canvas {
+  border: 1px solid #00a800;
+}
+
 /*# sourceMappingURL=main.css.map */

@@ -1,4 +1,4 @@
-import {Element} from "@/lib/units/element";
+import {Element} from "@/lib/game_logic/units/element";
 
 export class Canvas {
   constructor(canvas) {

@@ -1,5 +1,5 @@
-import {Element} from "@/lib/units/element";
-import Common from "@/lib/common";
+import {Element} from "@/lib/game_logic/units/element";
+import Common from "@/lib/game_logic/common";
 
 export class Missile extends Element {
   static animation = {

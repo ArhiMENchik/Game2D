@@ -78,3 +78,21 @@
 }
 
 // endregion
+
+// region ModelEditor
+.model-editor {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .model-editor-wrapper {
+    .model-editor-canvas {
+      border: 1px solid $menu-border-color;
+    }
+  }
+}
+
+// endregion

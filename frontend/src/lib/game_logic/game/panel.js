@@ -1,5 +1,5 @@
-import {Canvas} from "@/lib/canvas";
-import {Element} from "@/lib/units/element";
+import {Canvas} from "@/lib/game_logic/canvas";
+import {Element} from "@/lib/game_logic/units/element";
 
 export class Panel {
   constructor(canvas, select_group) {
